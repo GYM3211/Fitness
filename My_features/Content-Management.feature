@@ -1,44 +1,120 @@
+Feature: Approve or reject wellness articles, tips, or recipes shared by instructors
 
-@tag
-Feature: Content Management
-  As an admin,
-  I want to manage wellness articles, tips, and recipes,
-  So that I can ensure high-quality content and address user feedback.
-@tag1
-  Background:
-    Given I am logged in as an admin
-    And the content management dashboard is open
-@tag2
-  Scenario: Approve a wellness article shared by an instructor
-    Given there is a pending wellness article submitted by an instructor
-    When I review the article
-    And I approve the article
-    Then the article should be marked as approved
-    And it should be visible to users
-@tag3
-  Scenario: Reject a wellness recipe shared by an instructor
-    Given there is a pending wellness recipe submitted by an instructor
-    When I review the recipe
-    And I reject the recipe
-    Then the recipe should be marked as rejected
-    And a notification should be sent to the instructor explaining the rejection reason
-@tag4
-  Scenario: Approve an article shared on health and wellness
-    Given there is a pending health and wellness article
-    When I review the article
-    And I approve the article
-    Then the article should be marked as approved
-    And it should be visible to users
-@tag5
-  Scenario: Handle user feedback
-    Given there is new user feedback in the system
-    When I review the feedback
-    Then I should see options to mark it as resolved or escalate it
-    And I resolve the feedback
-    Then the feedback should be marked as resolved in the system
-@tag6
-  Scenario: Handle user complaints
-    Given there is a complaint submitted by a user
-    When I review the complaint
-    And I escalate the complaint for further action
-    Then the complaint should be marked as escalated in the system
+  Scenario: Approve a wellness article
+    Given that the user is an admin
+    And there are pending articles submitted by instructors
+    When the admin selects an article with ID <articleID>
+    And the admin approves the article
+    Then the article with ID <articleID> is published successfully
+    And the instructor is notified of the approval
+
+    Examples:
+      | articleID |
+      | 101       |
+      | 102       |
+
+  Scenario: Reject a wellness article
+    Given that the user is an admin
+    And there are pending articles submitted by instructors
+    When the admin selects an article with ID <articleID>
+    And the admin rejects the article
+    Then the article with ID <articleID> is marked as "Rejected"
+    And the instructor is notified of the rejection
+
+    Examples:
+      | articleID |
+      | 103       |
+      | 104       |
+
+  Scenario: Fail to approve or reject due to invalid article ID
+    Given that the user is an admin
+    And there are pending articles submitted by instructors
+    When the admin selects an article with ID <articleID>
+    And the article ID is invalid
+    Then the system displays a message "Article not found"
+
+    Examples:
+      | articleID |
+      | 999       |
+      | 888       |
+
+     Feature: Approve articles or tips shared on health and wellness
+
+  Scenario: Approve a health and wellness tip
+    Given that the user is an admin
+    And there are pending tips submitted by users
+    When the admin selects a tip with ID <tipID>
+    And the admin approves the tip
+    Then the tip with ID <tipID> is published successfully
+    And the user is notified of the approval
+
+    Examples:
+      | tipID |
+      | 201   |
+      | 202   |
+
+  Scenario: Reject a health and wellness tip
+    Given that the user is an admin
+    And there are pending tips submitted by users
+    When the admin selects a tip with ID <tipID>
+    And the admin rejects the tip
+    Then the tip with ID <tipID> is marked as "Rejected"
+    And the user is notified of the rejection
+
+    Examples:
+      | tipID |
+      | 203   |
+      | 204   |
+
+  Scenario: Fail to approve or reject a tip due to invalid tip ID
+    Given that the user is an admin
+    And there are pending tips submitted by users
+    When the admin selects a tip with ID <tipID>
+    And the tip ID is invalid
+    Then the system displays a message "Tip not found"
+
+    Examples:
+      | tipID |
+      | 999   |
+      | 888   |
+     
+     Feature: Handle user feedback and complaints
+
+  Scenario: Resolve a user complaint
+    Given that the user is an admin
+    And there are pending complaints submitted by users
+    When the admin selects a complaint with ID <complaintID>
+    And the admin resolves the complaint
+    Then the complaint with ID <complaintID> is marked as "Resolved"
+    And the user is notified of the resolution
+
+    Examples:
+      | complaintID |
+      | 301         |
+      | 302         |
+
+  Scenario: Fail to resolve a complaint due to invalid complaint ID
+    Given that the user is an admin
+    And there are pending complaints submitted by users
+    When the admin selects a complaint with ID <complaintID>
+    And the complaint ID is invalid
+    Then the system displays a message "Complaint not found"
+
+    Examples:
+      | complaintID |
+      | 999         |
+      | 888         |
+
+  Scenario: Mark a complaint as "Needs Further Review"
+    Given that the user is an admin
+    And there are pending complaints submitted by users
+    When the admin selects a complaint with ID <complaintID>
+    And the admin marks it as "Needs Further Review"
+    Then the complaint with ID <complaintID> is updated to "Needs Further Review"
+    And the user is notified that their complaint is under review
+
+    Examples:
+      | complaintID |
+      | 303         |
+      | 304         |
+      

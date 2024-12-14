@@ -1,48 +1,47 @@
+Feature: Manage subscription plans for clients and instructors
 
-Feature: Subscription Management
-  As an admin,
-  I want to manage subscription plans for clients and instructors,
-  So that I can provide appropriate access to features based on their subscription plans.
+  Scenario: Add a new subscription plan
+    Given that the user is an admin
+    When the admin creates a new subscription plan with the following details:
+      | Name       | Price | Features             |
+      | Basic      | $10   | Access to 5 programs |
+    Then the subscription plan "Basic" is added successfully
+    And the plan is visible in the subscription list
 
-  Background:
-    Given I am logged in as an admin
-    And the subscription management dashboard is open
+  Scenario: Update an existing subscription plan
+    Given that the user is an admin
+    And a subscription plan named "Premium" exists
+    When the admin updates the subscription plan with the following details:
+      | Name       | Price | Features                         |
+      | Premium    | $50   | Access to all programs, VIP support |
+    Then the subscription plan "Premium" is updated successfully
+    And the updated plan is visible in the subscription list
 
-  Scenario: Add a new subscription plan for clients
-    Given there is no subscription plan called "Elite"
-    When I create a new subscription plan with the name "Elite"
-    And set the price to "$50 per month"
-    And set the features to "Access to all programs, 1-on-1 coaching, Exclusive content"
-    Then the subscription plan "Elite" should be saved successfully
-    And it should be visible in the list of client subscription plans
+  Scenario: Delete a subscription plan
+    Given that the user is an admin
+    And a subscription plan named "Standard" exists
+    When the admin deletes the subscription plan "Standard"
+    Then the subscription plan "Standard" is removed from the subscription list
 
-  Scenario: Update an existing subscription plan for instructors
-    Given there is a subscription plan called "Basic" for instructors
-    When I update the "Basic" subscription plan
-    And change the price to "$30 per month"
-    And add the feature "Access to advanced analytics"
-    Then the changes should be saved successfully
-    And the updated plan should reflect the new price and features
+  Scenario: Assign a subscription plan to a user
+    Given that the user is an admin
+    And a user with ID 101 exists
+    When the admin assigns the subscription plan "Premium" to the user with ID 101
+    Then the user with ID 101 is subscribed to "Premium"
+    And the user's subscription status is "Active"
 
-  Scenario: Deactivate a subscription plan
-    Given there is a subscription plan called "Premium"
-    When I deactivate the subscription plan "Premium"
-    Then the plan should be marked as inactive
-    And it should not be available for new subscriptions
+  Scenario: View subscription details for a user
+    Given that the user is an admin
+    And a user with ID 102 has an active subscription
+    When the admin views the subscription details for the user with ID 102
+    Then the system displays the following details:
+      | Plan Name  | Status  | Expiry Date |
+      | Basic      | Active  | 2024-12-31  |
 
-  Scenario: View details of a subscription plan
-    Given there is a subscription plan called "Premium"
-    When I view the details of the "Premium" subscription plan
-    Then I should see the name, price, and list of features for the plan
-
-  Scenario: Assign a subscription plan to a client
-    Given there is a client named "John Doe" without an active subscription
-    And there is a subscription plan called "Basic"
-    When I assign the "Basic" subscription plan to "John Doe"
-    Then the client "John Doe" should have the "Basic" subscription plan active
-
-  Scenario: Assign a subscription plan to an instructor
-    Given there is an instructor named "Jane Smith" without an active subscription
-    And there is a subscription plan called "Premium"
-    When I assign the "Premium" subscription plan to "Jane Smith"
-    Then the instructor "Jane Smith" should have the "Premium" subscription plan active
+  Scenario: Fail to update a subscription plan due to missing details
+    Given that the user is an admin
+    When the admin tries to update a subscription plan with the following details:
+      | Name   | Price | Features |
+      |        | $20   |          |
+    Then the update fails
+    And the system displays an error message "Missing required fields for updating the subscription plan"
