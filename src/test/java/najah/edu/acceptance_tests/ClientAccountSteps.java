@@ -62,18 +62,42 @@ public class ClientAccountSteps {
 
     @Then("the user account is created successfully")
     public void user_account_created_successfully() {
-        assertTrue("Account creation failed", isLoggedIn);
+        // Check if the currentClient object exists and the user is logged in
+        if (currentClient != null && isLoggedIn) {
+            System.out.println("Account creation successful for: " + currentClient.getName());
+            assertTrue("User account should be created successfully", isLoggedIn);
+        } else {
+            // Fail the test with a clear error message
+            System.out.println("Account creation failed. User is not logged in or client object is null.");
+            fail("Account creation failed: User is not logged in or current client is null");
+        }
     }
+
 
     @Then("the user can log in to their account")
     public void user_can_log_in_to_account() {
-        assertEquals("john.doe@example.com", userAccount.get("Email"));
+        // Validate that the user is logged in and email matches the stored value
+        if (currentClient != null && isLoggedIn) {
+            assertEquals("User email does not match", "john.doe@example.com", currentClient.getEmail());
+            System.out.println("Login successful for: " + currentClient.getName());
+        } else {
+            System.out.println("Login failed: User is not logged in or client object is null.");
+            fail("Login failed: User session invalid or account details missing");
+        }
     }
+
 
     @Given("that the user is logged in")
     public void user_is_logged_in() {
+        // Simulate a logged-in user by creating a valid Client object
+        currentClient = new Client("John Doe", "john.doe@example.com", "password123");
+     
         isLoggedIn = true;
+
+        System.out.println("User is logged in as: " + currentClient.getName());
     }
+    
+//////////////
 
     @And("the user has an incomplete profile")
     public void user_has_incomplete_profile() {
