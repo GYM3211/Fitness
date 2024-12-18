@@ -103,6 +103,7 @@ public class ClientAccountSteps {
     public void user_has_incomplete_profile() {
         profileDetails.clear();
     }
+    
 
     @When("the user updates their profile with the following details:")
     public void user_updates_profile(io.cucumber.datatable.DataTable dataTable) {
@@ -113,6 +114,7 @@ public class ClientAccountSteps {
             profileDetails.putAll(updates);
         }
     }
+    
 
     @Then("the profile is updated successfully")
     public void profile_updated_successfully() {
