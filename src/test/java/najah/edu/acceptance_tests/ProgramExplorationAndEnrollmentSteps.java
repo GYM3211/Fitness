@@ -26,7 +26,7 @@ public class ProgramExplorationAndEnrollmentSteps {
     public void available_programs_in_system() {
         boolean isProgramAdded;
 
-        // Create schedule for "Weight Loss for Beginners"
+       
         List<Map<String, String>> beginnersWeightLossSchedule = createSchedule(
                 new String[][]{
                         {"Day", "Monday", "Time", "7:00 PM"},
@@ -36,7 +36,7 @@ public class ProgramExplorationAndEnrollmentSteps {
         isProgramAdded = programs.add(createProgram("Weight Loss for Beginners", "Beginner", "Weight Loss", beginnersWeightLossSchedule));
         System.out.println("Program 'Weight Loss for Beginners' added: " + isProgramAdded);
 
-        // Create schedule for "Flexibility Basics"
+       
         List<Map<String, String>> flexibilityBasicsSchedule = createSchedule(
                 new String[][]{
                         {"Day", "Tuesday", "Time", "6:00 PM"},
@@ -46,7 +46,7 @@ public class ProgramExplorationAndEnrollmentSteps {
         isProgramAdded = programs.add(createProgram("Flexibility Basics", "Beginner", "Flexibility", flexibilityBasicsSchedule));
         System.out.println("Program 'Flexibility Basics' added: " + isProgramAdded);
 
-        // Add programs with no schedules
+       
         programs.add(createProgram("Advanced Fat Burning", "Advanced", "Weight Loss", new ArrayList<>()));
         programs.add(createProgram("Muscle Building Advanced", "Advanced", "Muscle Building", new ArrayList<>()));
 
