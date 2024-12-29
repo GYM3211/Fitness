@@ -1,73 +1,56 @@
-Feature: Program management
+Feature: Instructor Program Management
+  As an instructor
+  I want to manage fitness programs
+  So that I can provide structured training content and schedules for my clients
 
-  Scenario Outline: Create a new fitness program
-    Given the admin is on the "Create Program" page
-    When the admin enters the following details:
-      | Field            | Value                 |
-      | Program Title    | <title>              |
-      | Duration         | <duration>           |
-      | Difficulty Level | <difficulty>         |
-      | Goals            | <goals>              |
-      | Price            | <price>              |
-    And the admin uploads media:
-      | Type    | File Name        |
-      | Video   | <videoFile>      |
-      | Image   | <imageFile>      |
-      | Document| <documentFile>   |
-    And the admin sets the schedule:
-      | Session Type | Date       | Time    | Mode       |
-      | <sessionType>| <date>     | <time>  | <mode>     |
-    And the admin clicks the "Save" button
-    Then the program is created successfully
-    And it is visible on the program listing page
+  Background:
+    Given I am logged in as an instructor
 
-    Examples:
-      | title             | duration | difficulty | goals              | price  | sessionType    | date       | time    | mode        |
-      | Yoga for Beginners | 4 weeks  | Beginner   | Flexibility       | 50    |  Group Session  | 2024-01-15 | 10:00AM | Online      |
-      | Strength Pro       | 8 weeks  | Advanced   | Muscle Building   | 100    | Group Session  | 2024-02-01 | 6:00PM  | In-person   |
+  # Scenario: Create a new fitness program
+  Scenario: Create a new fitness program
+    Given I navigate to the "Create Program" page
+    When I enter the following program details:
+      | Field               | Value                                  |
+      | Title               | "Total Body Transformation"            |
+      | Duration            | "12 weeks"                             |
+      | Difficulty Level    | "Intermediate"                         |
+      | Goals               | "Weight loss and strength building"    |
+      | Video Tutorials     | "Uploaded 5 tutorial videos"           |
+      | Images/Documents    | "Program overview PDF"                 |
+      | Price               | "99"                                   |
+    And I set the group session schedules:
+      | Session Type | Day       | Time       |
+      | "Online"     | "Monday"  | "8:00 AM"   |
+      | "In-person"  | "Friday"  | "6:00 PM"   |
+    And I click "Create Program"
+    Then I should see a confirmation message "Program has been created successfully"
+    And the newly created program "Total Body Transformation" should be listed on my programs page
 
-  Scenario Outline: Update an existing fitness program
-    Given the admin is on the "Program Management" page
-    And the program titled "<title>" exists
-    When the admin updates the following details:
-      | Field            | New Value            |
-      | Duration         | <newDuration>        |
-      | Price            | <newPrice>           |
-    
-    And the admin clicks the "Update" button
-    Then the program is updated successfully
-    And the changes are reflected in the program details
+  # Scenario: Update an existing fitness program
+  Scenario: Update an existing fitness program
+    Given I have an existing program titled "Total Body Transformation"
+    When I click on the "Edit" option for "Total Body Transformation"
+    And I update the following fields:
+      | Field               | Value                                  |
+      | Duration            | "16 weeks"                             |
+      | Difficulty Level    | "Advanced"                             |
+      | Goals               | "Advanced strength and endurance"      |
+    And I update the group session schedules:
+      | Session Type | Day       | Time       |
+      | "Online"     | "Wednesday" | "7:00 AM" |
+      | "In-person"  | "Saturday"  | "5:00 PM" |
+    And I click "Update Program"
+    Then I should see a confirmation message "Program updated successfully"
+    And the program details should reflect:
+      | Duration         | "16 weeks"                          |
+      | Difficulty Level | "Advanced"                          |
+      | Goals            | "Advanced strength and endurance"   |
 
-    Examples:
-      | title             | newDuration | newPrice | 
-      | Yoga for Beginners | 6 weeks     | 60       | 
-      | Strength Pro       | 10 weeks    | 120      |
-
+  # Scenario: Delete a fitness program
   Scenario: Delete a fitness program
-    Given the admin is on the "Program Management" page
-    And the program titled "Strength Pro" exists
-    When the admin clicks the "Delete" button next to the program
-    And confirms the deletion
-    Then the program is removed from the program listing
-    And a success message is displayed: "Program deleted successfully"
-
-  Scenario Outline: Set group session schedules for a program
-    Given the admin is on the "Edit Program" page for the program titled "<title>"
-    When the admin adds the following group session schedules:
-      | Session Type  | Date       | Time     | Mode      |
-      | <sessionType> | <date>     | <time>   | <mode>    |
-    And the admin clicks "Save"
-    Then the session schedule is saved successfully
-    And the updated schedule is displayed in the program details
-
-    Examples:
-      | title             | sessionType   | date       | time     | mode       |
-      | Yoga for Beginners | Group Session | 2024-03-01 | 8:00 AM  | Online     |
-      | Strength Pro       | Group Session | 2024-03-15 | 5:00 PM  | In-person  |
-
-  Scenario: Fail to create a program due to missing required fields
-    Given the admin is on the "Create Program" page
-    When the admin leaves the "Program Title" field empty
-    And clicks the "Save" button
-    Then the program is not created
-    And an error message is displayed: "Program Title is required."
+    Given I have multiple existing programs
+    And one of them is titled "Total Body Transformation"
+    When I click on the "Delete" option for "Total Body Transformation"
+    And I confirm the deletion
+    Then I should see a confirmation message "Program deleted successfully"
+    And "Total Body Transformation" should no longer be listed on my programs page

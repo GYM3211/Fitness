@@ -1,40 +1,56 @@
 Feature: Progress Tracking
+  As an instructor
+  I want to monitor client progress and attendance
+  So that I can provide motivational reminders or recommendations when needed
 
-  Scenario: Admin monitors client progress
-    Given the admin is on the "Client Progress" page
-    And the client "John Doe" is enrolled in the "Yoga for Beginners" program
-    When the admin views the progress report for the client
-    Then the following details are displayed:
-      | Metric             | Value        |
-      | Completion Rate    | 75%          |
-      | Attendance         | 8/10 sessions |
-      | Goals Achieved     | Increased flexibility |
+  Background:
+    Given I am logged in as an instructor
 
-  Scenario: Admin sends a motivational reminder to a client
-    Given the admin is on the "Client Management" page
-    And the client "Jane Smith" is enrolled in the "Strength Pro" program
-    When the admin selects "Send Motivational Reminder" for the client
-    And writes the message:
-      """
-      Keep up the great work, Jane! You're almost halfway through the program—stay consistent!
-      """
-    And clicks "Send"
-    Then the message is delivered to the client
-    And the client receives a notification: "You have a new motivational message from your coach."
+  # Scenario: View client progress and completion rates
+  Scenario: View progress for an enrolled client
+    Given I have a client named "Jane Doe" enrolled in "Bodyweight Basics"
+    And "Jane Doe" has attended 3 out of 5 scheduled sessions
+    When I navigate to the "Progress Tracking" page
+    And I select "Jane Doe" under "Bodyweight Basics"
+    Then I should see:
+      | Sessions Attended | "3"      |
+      | Sessions Total    | "5"      |
+      | Completion Rate   | "60%"    |
+    And I should see a chart or summary that reflects these progress details
 
-  Scenario Outline: Admin sends personalized recommendations to a client
-    Given the admin is on the "Client Management" page
-    And the client "<clientName>" is enrolled in the "<programTitle>" program
-    When the admin selects "Send Recommendation" for the client
-    And writes:
-      """
-      <recommendation>
-      """
-    And clicks "Send"
-    Then the message is delivered to the client
-    And the client receives a notification: "You have a new recommendation from your coach."
+  # Scenario: Monitor attendance for a specific session
+  Scenario: Track attendance for a given session
+    Given "Bodyweight Basics" has a session scheduled for "2024-12-30 10:00 AM"
+    And the following clients are enrolled:
+      | Name       |
+      | "Jane Doe" |
+      | "John Smith" |
+    When the session "2024-12-30 10:00 AM" occurs
+    And I mark attendance in the system:
+      | Name       | Attended? |
+      | "Jane Doe" | "Yes"     |
+      | "John Smith" | "No"     |
+    Then the attendance record for "2024-12-30 10:00 AM" should show:
+      | "Jane Doe"   | "Present" |
+      | "John Smith" | "Absent"  |
 
-    Examples:
-      | clientName | programTitle        | recommendation                            |
-      | John Doe   | Yoga for Beginners  | Try adding 10 minutes of morning yoga.   |
-      | Jane Smith | Strength Pro        | Consider increasing weights gradually.   |
+  # Scenario: Send motivational reminders to a client
+  Scenario: Send motivational reminders or recommendations
+    Given a client named "John Smith" is enrolled in "Bodyweight Basics"
+    And "John Smith" has a completion rate of "40%"
+    When I choose to send a motivational reminder to "John Smith"
+    And I enter the message "Keep pushing, John! You’re almost halfway there!"
+    And I click "Send Reminder"
+    Then a message should be sent to "John Smith"
+    And I should see a confirmation message "Motivational reminder sent to John Smith"
+
+  # Scenario: Recommend activities or adjustments based on progress
+  Scenario: Provide recommendations to improve client progress
+    Given a client named "Jane Doe" is enrolled in "Bodyweight Basics"
+    And "Jane Doe" has completed "2" out of "5" modules
+    When I open "Jane Doe's" progress details
+    And I select "Provide Recommendations"
+    And I enter "Focus on core exercises next week to build foundational strength."
+    And I click "Send Recommendations"
+    Then I should see a confirmation "Recommendations sent to Jane Doe"
+    And "Jane Doe" should receive a notification with the recommendation
