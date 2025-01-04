@@ -177,7 +177,7 @@ public class ClientDashboard {
     private static void updateSubscription(String username, String newSubscription) {
         try {
             File file = new File(Main.USERS_FILE);
-            File tempFile = new File("C:\\Users\\musta\\Documents\\NetBeansProjects\\gym\\src\\users_temp.txt");
+            File tempFile = new File("C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp");
 
             BufferedReader reader = new BufferedReader(new FileReader(file));
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
