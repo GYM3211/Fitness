@@ -10,9 +10,9 @@ public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private static final Scanner scanner = new Scanner(System.in);
-    protected static final String USERS_FILE = "C:\\Users\\musta\\Documents\\NetBeansProjects\\gym\\src\\users.txt";
-    protected static final String ARTICLES_FILE = "C:\\Users\\musta\\Documents\\NetBeansProjects\\gym\\src\\articles.txt";
-    protected static final String LOGS_FILE = "C:\\Users\\musta\\Documents\\NetBeansProjects\\gym\\src\\logs.txt";
+    protected static final String USERS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users";
+    protected static final String ARTICLES_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\articles";
+    protected static final String LOGS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\logs";
 
     public static void displayMenu() {
         int choice;
