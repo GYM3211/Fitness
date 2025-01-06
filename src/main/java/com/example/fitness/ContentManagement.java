@@ -15,6 +15,7 @@ public class ContentManagement {
 
     private static final Logger logger = Logger.getLogger(ContentManagement.class.getName());
 
+    
     public static void manageContent() {
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -37,7 +38,7 @@ public class ContentManagement {
                         printAllArticles();  // Method to display all articles
                         break;
                     case 2:
-                        //addNewArticle();  // Method to add a new article
+                    //	addNewArticle( );  // Method to add a new article
                         break;
                     case 3:
                         editArticleById();  // Method to edit an article by ID
@@ -83,30 +84,30 @@ public class ContentManagement {
 
 
     private static void addNewArticle(String username) {
-            Scanner scanner = new Scanner(System.in);
+    	  Scanner scanner = new Scanner(System.in);
 
-        // Ask for article details
-        logger.log(Level.INFO, "\u001B[32mEnter the article title: \u001B[0m");
-        String title = scanner.nextLine();
+          // Ask for article details
+          logger.log(Level.INFO, "\u001B[32mEnter the article title: \u001B[0m");
+          String title = scanner.nextLine();
 
-        logger.log(Level.INFO, "\u001B[32mEnter the article content: \u001B[0m");
-        String content = scanner.nextLine();
+          logger.log(Level.INFO, "\u001B[32mEnter the article content: \u001B[0m");
+          String content = scanner.nextLine();
 
-        // Get the current date
-        String publishDate = java.time.LocalDate.now().toString();
+          // Get the current date
+          String publishDate = java.time.LocalDate.now().toString();
 
-        // Create article entry
-        String articleId = generateArticleId();  // Implement a method to generate unique ID for each article
-        String author = username;
+          // Create article entry
+          String articleId = generateArticleId();  // Implement a method to generate unique ID for each article
+          String author = username;
 
-        // Save article to file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
-            writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
-            writer.newLine();
-            logger.log(Level.INFO, "\u001B[32mArticle created successfully with ID: {0}\u001B[0m", articleId);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError saving article: {0}\u001B[0m", e.getMessage());
-        }
+          // Save article to file
+          try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
+              writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
+              writer.newLine();
+              logger.log(Level.INFO, "\u001B[32mArticle created successfully with ID: {0}\u001B[0m", articleId);
+          } catch (IOException e) {
+              logger.log(Level.SEVERE, "\u001B[31mError saving article: {0}\u001B[0m", e.getMessage());
+          }
     }
    
     private static void editArticleById() {

@@ -16,6 +16,7 @@ public class ClientDashboard {
     private static final Logger logger = Logger.getLogger(ClientDashboard.class.getName());
 
     public static void showDashboard(String username) {
+    	
         Scanner scanner = new Scanner(System.in);
         int choice;
 

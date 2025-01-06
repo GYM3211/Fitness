@@ -13,6 +13,7 @@ public class Login {
 
     private static final Logger logger = Logger.getLogger(Login.class.getName());
     private static String userType = "";
+    
 
     public static void loginMenu() {
         Scanner scanner = new Scanner(System.in);

@@ -8,6 +8,7 @@ public class AdminDashboard {
     private static final Logger logger = Logger.getLogger(AdminDashboard.class.getName());
 
     public static void showDashboardOptions() {
+    	
         Scanner scanner = new Scanner(System.in);
         int choice;
 
