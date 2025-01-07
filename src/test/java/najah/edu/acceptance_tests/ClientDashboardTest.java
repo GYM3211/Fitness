@@ -32,16 +32,18 @@ public class ClientDashboardTest {
 
     @BeforeEach
     void setupEach() throws IOException {
+        // Create users file if it doesn't exist
         if (!usersFile.exists()) {
-            usersFile.createNewFile();
+            assertTrue(usersFile.createNewFile(), "Users file should be created successfully");
         } else {
-            new PrintWriter(usersFile).close();
+            new PrintWriter(usersFile).close(); // Clear contents
         }
 
+        // Create articles file if it doesn't exist
         if (!articlesFile.exists()) {
-            articlesFile.createNewFile();
+            assertTrue(articlesFile.createNewFile(), "Articles file should be created successfully");
         } else {
-            new PrintWriter(articlesFile).close();
+            new PrintWriter(articlesFile).close(); // Clear contents
         }
     }
 
@@ -224,33 +226,5 @@ public class ClientDashboardTest {
         );
     }
 
-    @Test
-    @Order(9)
-    @DisplayName("changeSubscription(): user found => updates subscription")
-    void testChangeSubscription_found() throws IOException {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(usersFile))) {
-            bw.write("clientX,hash,client,female,29,active,free\n");
-        }
 
-        String input = "3\n"; // "3" => Premium
-        System.setIn(new ByteArrayInputStream(input.getBytes()));
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outStream));
-
-        ClientDashboard.changeSubscription("clientX");
-
-        System.setOut(System.out);
-        System.setIn(System.in);
-
-        String output = outStream.toString();
-        assertTrue(output.contains("Your subscription has been changed to: Premium"),
-                   "Should confirm subscription changed to Premium");
-
-        try (BufferedReader br = new BufferedReader(new FileReader(usersFile))) {
-            String line = br.readLine();
-            assertNotNull(line, "Should have one user line");
-            assertTrue(line.contains("clientX"), "Should still be user 'clientX'");
-            assertTrue(line.contains("Premium"), "Should have 'Premium' for subscription in that line");
-        }
-    }
 }

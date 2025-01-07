@@ -5,8 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The {@code ContentManagement} class provides functionalities for managing articles
+ * within the fitness application. It allows users to print all articles, add new articles,
+ * edit existing articles by ID, and delete articles by ID.
+ *
+ * <p>Articles are stored in a CSV file specified by {@code Main.ARTICLES_FILE}.
+ * Each article has a unique ID, title, author, publish date, and content.
+ */
 public class ContentManagement {
 
+    /**
+     * Displays the content management menu to the user and handles user input for
+     * different content management operations.
+     *
+     * @param username the username of the current user
+     */
     public static void manageContent(String username) {
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -48,6 +62,10 @@ public class ContentManagement {
         }
     }
 
+    /**
+     * Prints all articles available in the articles file. Each article's ID and title are displayed.
+     * If no articles are found, a message is displayed to the user.
+     */
     public static void printAllArticles() {
         File file = new File(Main.ARTICLES_FILE);
         if (!file.exists()) {
@@ -63,7 +81,6 @@ public class ContentManagement {
                 String[] articleDetails = line.split(",", 5);
                 if (articleDetails.length >= 5) {
                     foundAny = true;
-                    // e.g. "ID: 12345 - Title: My Article"
                     System.out.println("ID: " + articleDetails[0] + " - Title: " + articleDetails[1]);
                 }
             }
@@ -76,6 +93,12 @@ public class ContentManagement {
         }
     }
 
+    /**
+     * Adds a new article to the articles file. The user is prompted for the article title and content.
+     * The current date is used as the publish date, and the article is assigned a unique ID.
+     *
+     * @param username the username of the author
+     */
     public static void addNewArticle(String username) {
         Scanner scanner = new Scanner(System.in);
 
@@ -85,13 +108,10 @@ public class ContentManagement {
         System.out.print("Enter the article content: ");
         String content = scanner.nextLine();
 
-        // Current date as publish date
         String publishDate = java.time.LocalDate.now().toString();
+        String articleId = generateArticleId();
+        String author = username;
 
-        String articleId = generateArticleId();  
-        String author = username;  
-
-        // Save article
         File file = new File(Main.ARTICLES_FILE);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
@@ -102,6 +122,10 @@ public class ContentManagement {
         }
     }
 
+    /**
+     * Edits an existing article's content based on the article ID provided by the user.
+     * If the article is found, its content is updated; otherwise, an error message is displayed.
+     */
     public static void editArticleById() {
         Scanner scanner = new Scanner(System.in);
 
@@ -120,13 +144,11 @@ public class ContentManagement {
         List<String> updatedLines = new ArrayList<>();
         boolean found = false;
 
-        // Read existing articles
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", 5);
                 if (parts[0].equals(id)) {
-                    // Overwrite content
                     updatedLines.add(parts[0] + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + newContent);
                     found = true;
                 } else {
@@ -138,13 +160,11 @@ public class ContentManagement {
             return;
         }
 
-        // If not found
         if (!found) {
             System.out.println("Article ID " + id + " not found.");
             return;
         }
 
-        // Rewrite file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (String updatedLine : updatedLines) {
                 writer.write(updatedLine);
@@ -158,6 +178,10 @@ public class ContentManagement {
         System.out.println("Article ID " + id + " updated!\nNew Content: " + newContent);
     }
 
+    /**
+     * Deletes an article from the articles file based on the article ID provided by the user.
+     * If the article is found, it is removed from the file; otherwise, an error message is displayed.
+     */
     public static void deleteArticleById() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the ID of the article to delete: ");
@@ -175,7 +199,6 @@ public class ContentManagement {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // If line starts with "ID," means we found the article
                 String[] parts = line.split(",", 5);
                 if (parts[0].equals(id)) {
                     found = true;
@@ -206,7 +229,11 @@ public class ContentManagement {
         System.out.println("Article ID " + id + " deleted successfully!");
     }
 
-    // Helper to generate a unique article ID (could be time-based or a UUID)
+    /**
+     * Generates a unique article ID based on the current system time in milliseconds.
+     *
+     * @return a unique article ID as a string
+     */
     private static String generateArticleId() {
         return String.valueOf(System.currentTimeMillis());
     }

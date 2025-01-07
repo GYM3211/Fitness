@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 public class Login {
 
     private static final Logger logger = Logger.getLogger(Login.class.getName());
+    
     private static String userType = "";
 
     public static void loginMenu() {
