@@ -1,5 +1,6 @@
 package com.example.fitness;
 
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -10,9 +11,16 @@ public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private static final Scanner scanner = new Scanner(System.in);
-    protected static final String USERS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users";
-    protected static final String ARTICLES_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\articles";
+    public static String USERS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users";
+    protected static final String USERS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp.txt";
+    public static String ARTICLES_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\articles";
     protected static final String LOGS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\logs";
+    protected static final String FITNESS_GOALS_FILE = "\"C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\fitness_goals";
+    protected static final String FEEDBACK = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\feedback";
+    protected static final String SUBSCRIPTIONS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions";
+    protected static final String SUBSCRIPTIONS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions_temp";
+    protected static final String PROGRAMS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs";
+    protected static final String PROGRAMS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs_temp";
 
     public static void displayMenu() {
         int choice;
@@ -21,7 +29,7 @@ public class Main {
             "|                                    |\n" +
             "|          1. Register              |\n" +
             "|          2. Login                 |\n" +
-            "|          3. About The Program                 |\n" +
+            "|          3. About The Program     |\n" +
             "|          4. Exit                  |\n" +
             "|                                    |\n" +
             "--------------------------------------\n" +
@@ -45,6 +53,7 @@ public class Main {
                         aboutUs();
                         displayMenu();
                         break;
+                        
                     case 4:
                         logger.log(Level.INFO, "\u001B[33mThank you for using the Gym System. Goodbye!\u001B[0m");
                         System.exit(0);
@@ -60,7 +69,7 @@ public class Main {
 
     }
     
-    private static void aboutUs() {
+    public static String  aboutUs() {
         logger.log(Level.INFO, "\u001B[36m------ About Us ------\u001B[0m");
         logger.log(Level.INFO, "\u001B[32mWelcome to the Gym Management System.\n" +
                 "Our goal is to provide an efficient, user-friendly platform for gym clients, instructors, and admins.\n" +
@@ -68,11 +77,22 @@ public class Main {
                 "Instructors can create articles and interact with clients.\n" +
                 "Admins manage users, content, and more.\n" +
                 "Thank you for using our system!\u001B[0m");
+		return 
+			             "\u001B[36m------ About Us ------\u001B[0m\n" +
+			             "\u001B[32mWelcome to the Gym Management System.\n" +
+			             "Our goal is to provide an efficient, user-friendly platform for gym clients, instructors, and admins.\n" +
+			             "With this system, clients can easily book classes, read informative articles, and manage their profiles.\n" +
+			             "Instructors can create articles and interact with clients.\n" +
+			             "Admins manage users, content, and more.\n" +
+			             "Thank you for using our system!\u001B[0m\n";
     }
     
     
-    protected static String hashPassword(String password) {
-        try {
+    public static String hashPassword(String password) {
+        if (password == null) {
+            return null; // Return null for null input
+        }
+    	try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedBytes = md.digest(password.getBytes());
             StringBuilder sb = new StringBuilder();

@@ -11,12 +11,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDashboard {
+public class ClientDashboard{
 
     private static final Logger logger = Logger.getLogger(ClientDashboard.class.getName());
 
     public static void showDashboard(String username) {
-    	
         Scanner scanner = new Scanner(System.in);
         int choice;
 
@@ -24,8 +23,11 @@ public class ClientDashboard {
             logger.log(Level.INFO, "\u001B[36m------ Client Dashboard ------\n" +
                     "1. View Profile\n" +
                     "2. Read an Article\n" +
-                    "3. Change Subscription\n" +
-                    "4. Logout\n" +
+                    "3. Fitness Goals\n" + 
+                    "4. Change Subscription\n" +
+                    "5. Programs Dashboard\n" +
+                    "6. Feedback\n" +
+                    "7. Logout\n" +
                     "\u001B[0m");
             logger.log(Level.INFO, "\u001B[32mEnter your choice: \u001B[0m");
 
@@ -42,12 +44,27 @@ public class ClientDashboard {
                         readArticles();
                         break;
                     }
-                    case 3 : {
+                    case 3: {
+                        logger.log(Level.INFO, "\u001B[34mDisplaying fitness goals options...\u001B[0m");
+                        showFitnessGoalDashboard(username);
+                        break;
+                    }
+                    case 4 : {
                         logger.log(Level.INFO, "\u001B[34mChanging subscription...\u001B[0m");
                         changeSubscription(username);
                         break;
                     }
-                    case 4 : {
+                    case 5 : {
+                        logger.log(Level.INFO, "\u001B[34mViewing programs dashboard...\u001B[0m");
+                        ProgramDashboardClient.showProgramsDashboard(username);
+                        break;
+                    }
+                    case 6 : {
+                        logger.log(Level.INFO, "\u001B[34mViewing Feedback...\u001B[0m");
+                        FeedbackHandler.showFeedbackDashboard(username,"Instructor");
+                        break;
+                    }
+                    case 7 : {
                         logger.log(Level.INFO, "\u001B[33mLogging out... Goodbye, {0}!\u001B[0m", new Object[]{username});
                         return; // Exit the dashboard
                     }
@@ -119,6 +136,42 @@ public class ClientDashboard {
         }
     }
 
+    private static void showFitnessGoalDashboard(String username) {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+        while (true) {
+            logger.log(Level.INFO, "\u001B[36m------ Fitness Goals Dashboard ------\u001B[0m\n" +
+                    "\u001B[32m1. View My Fitness Goals\n" +
+                    "2. Add a New Fitness Goal\n" +
+                    "3. Delete a Fitness Goal\n" +
+                    "4. Back to Dashboard\u001B[0m");
+            logger.log(Level.INFO, "\u001B[33mChoose an option: \u001B[0m");
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1:
+                        FitnessGoals.viewFitnessGoals(username);
+                        break;
+                    case 2:
+                        FitnessGoals.addFitnessGoal(username);
+                        break;
+                    case 3:
+                        FitnessGoals.deleteFitnessGoal(username);
+                        break;
+                    case 4:
+                        logger.log(Level.INFO, "\u001B[33mReturning to Dashboard...\u001B[0m");
+                        return;
+                    default:
+                        logger.log(Level.WARNING, "\u001B[31mInvalid option. Please try again.\u001B[0m");
+                }
+            } catch (NumberFormatException e) {
+                logger.log(Level.WARNING, "\u001B[31mInvalid input! Please enter a number.\u001B[0m");
+            }
+        }
+    }
+
+    
+
     private static void changeSubscription(String username) {
         Scanner scanner = new Scanner(System.in);
 
@@ -175,10 +228,11 @@ public class ClientDashboard {
         return null;  // Default case if no subscription found
     }
 
+    
     private static void updateSubscription(String username, String newSubscription) {
         try {
             File file = new File(Main.USERS_FILE);
-            File tempFile = new File("C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp");
+            File tempFile = new File(Main.USERS_TEMP_FILE);
 
             BufferedReader reader = new BufferedReader(new FileReader(file));
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));

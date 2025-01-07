@@ -11,12 +11,12 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ContentManagement {
+public class ContentManagement 
+{
 
     private static final Logger logger = Logger.getLogger(ContentManagement.class.getName());
 
-    
-    public static void manageContent() {
+    public static void manageContent(String username) {
         Scanner scanner = new Scanner(System.in);
         int choice;
 
@@ -38,7 +38,7 @@ public class ContentManagement {
                         printAllArticles();  // Method to display all articles
                         break;
                     case 2:
-                    //	addNewArticle( );  // Method to add a new article
+                        addNewArticle(username);  // Method to add a new article
                         break;
                     case 3:
                         editArticleById();  // Method to edit an article by ID
@@ -59,7 +59,7 @@ public class ContentManagement {
         }
     }
 
-    private static void printAllArticles() {
+    public static void printAllArticles() {
         // Logic to read and print all articles from the ARTICLES_FILE
         try (BufferedReader reader = new BufferedReader(new FileReader(Main.ARTICLES_FILE))) {
             String line;
@@ -83,35 +83,36 @@ public class ContentManagement {
     }
 
 
-    private static void addNewArticle(String username) {
-    	  Scanner scanner = new Scanner(System.in);
+    public static void addNewArticle(String username) {
+        Scanner scanner = new Scanner(System.in);
 
-          // Ask for article details
-          logger.log(Level.INFO, "\u001B[32mEnter the article title: \u001B[0m");
-          String title = scanner.nextLine();
+        // Ask for article details
+        
+        logger.log(Level.INFO, "\u001B[32mEnter the article title: \u001B[0m");
+        String title = scanner.nextLine();
 
-          logger.log(Level.INFO, "\u001B[32mEnter the article content: \u001B[0m");
-          String content = scanner.nextLine();
+        logger.log(Level.INFO, "\u001B[32mEnter the article content: \u001B[0m");
+        String content = scanner.nextLine();
 
-          // Get the current date
-          String publishDate = java.time.LocalDate.now().toString();
+        // Get the current date
+        String publishDate = java.time.LocalDate.now().toString();
 
-          // Create article entry
-          String articleId = generateArticleId();  // Implement a method to generate unique ID for each article
-          String author = username;
+        // Create article entry
+        String articleId = generateArticleId();  // Implement a method to generate unique ID for each article
+        String author = username;
 
-          // Save article to file
-          try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
-              writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
-              writer.newLine();
-              logger.log(Level.INFO, "\u001B[32mArticle created successfully with ID: {0}\u001B[0m", articleId);
-          } catch (IOException e) {
-              logger.log(Level.SEVERE, "\u001B[31mError saving article: {0}\u001B[0m", e.getMessage());
-          }
+        // Save article to file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
+            writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
+            writer.newLine();
+            logger.log(Level.INFO, "\u001B[32mArticle created successfully with ID: {0}\u001B[0m", articleId);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "\u001B[31mError saving article: {0}\u001B[0m", e.getMessage());
+        }
     }
    
-    private static void editArticleById() {
-        logger.log(Level.INFO, "\u001B[32mEnter the ID of the article to edit: \u001B[0m");
+    public static void editArticleById() {
+    	logger.log(Level.INFO, "\u001B[32mEnter the ID of the article to edit: \u001B[0m");
         Scanner scanner = new Scanner(System.in);
         String id = scanner.nextLine();
 
@@ -123,10 +124,11 @@ public class ContentManagement {
             List<String> updatedLines = new ArrayList<>();
             boolean found = false;
 
+            // Read and check for the article ID
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(",", 5);
+                    String[] parts = line.split(",", 5); // Ensure split for the required number of parts
                     if (parts[0].equals(id)) {
                         updatedLines.add(parts[0] + "," + parts[1] + "," + parts[2] + "," + parts[3] + "," + newContent);
                         found = true;
@@ -136,11 +138,13 @@ public class ContentManagement {
                 }
             }
 
+            // Handle the case where the article ID is not found
             if (!found) {
                 logger.log(Level.WARNING, "\u001B[31mArticle ID {0} not found.\u001B[0m", id);
-                return;
+                return; // Exit the method if the ID was not found
             }
 
+            // Write back the updated lines to the file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                 for (String updatedLine : updatedLines) {
                     writer.write(updatedLine);
@@ -148,6 +152,7 @@ public class ContentManagement {
                 }
             }
 
+            // Log success message
             logger.log(Level.INFO, "\u001B[34mArticle ID {0} updated!\nNew Content: {1}\u001B[0m", new Object[]{id, newContent});
         } catch (IOException e) {
             logger.log(Level.SEVERE, "\u001B[31mError editing article: {0}\u001B[0m", e.getMessage());
@@ -160,7 +165,7 @@ public class ContentManagement {
         return String.valueOf(System.currentTimeMillis());
     }
     
-    private static void deleteArticleById() {
+    public static void deleteArticleById() {
         logger.log(Level.INFO, "\u001B[31mEnter the ID of the article to delete: \u001B[0m");
         Scanner scanner = new Scanner(System.in);
         String id = scanner.nextLine();
@@ -177,6 +182,7 @@ public class ContentManagement {
                         updatedLines.add(line);
                     } else {
                         found = true;
+                        
                     }
                 }
             }
@@ -198,5 +204,6 @@ public class ContentManagement {
             logger.log(Level.SEVERE, "\u001B[31mError deleting article: {0}\u001B[0m", e.getMessage());
         }
     }
+    
 
 }

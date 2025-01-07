@@ -1,5 +1,6 @@
 package com.example.fitness;
 
+
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +14,6 @@ public class Login {
 
     private static final Logger logger = Logger.getLogger(Login.class.getName());
     private static String userType = "";
-    
 
     public static void loginMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -80,16 +80,16 @@ public class Login {
      // Check user role and redirect accordingly
      if (userType.toLowerCase().equals("admin")) {
          logger.log(Level.INFO, "\u001B[34mRedirecting Admin: {0} to the Admin Dashboard...\u001B[0m", username);
-          AdminDashboard.showDashboardOptions();
-        
+          AdminDashboard.showDashboardOptions(username);
+         // Additional logic to handle Admin options
      } else if (userType.toLowerCase().equals("instructor")) {
          logger.log(Level.INFO, "\u001B[34mRedirecting Instructor: {0} to the Instructor Dashboard...\u001B[0m", username);
          InstructorDashboard.showDashboard(username);
-       
+         // Redirect to instructor dashboard
      } else if (userType.toLowerCase().equals("client")) {
          logger.log(Level.INFO, "\u001B[34mRedirecting Client: {0} to the Client Dashboard...\u001B[0m", username);
          ClientDashboard.showDashboard(username);
-      
+         // Redirect to client dashboard
      } else {
          logger.log(Level.WARNING, "\u001B[31mInvalid user type: {0}. Cannot redirect.\u001B[0m", userType);
          

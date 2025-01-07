@@ -2,13 +2,12 @@ package com.example.fitness;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 public class AdminDashboard {
 
-	
     private static final Logger logger = Logger.getLogger(AdminDashboard.class.getName());
 
-    public static void showDashboardOptions() {
-    	
+    public static void showDashboardOptions(String username) {
         Scanner scanner = new Scanner(System.in);
         int choice;
 
@@ -17,7 +16,7 @@ public class AdminDashboard {
             logger.log(Level.INFO, "\u001B[36m------ Admin Dashboard ------\u001B[0m\n" +
                     "\u001B[32m1. Users Management\n" +
                     "2. Content Management\n" +
-                    "3. View Reports\n" +
+                    "3. System Logs\n" +
                     "4. Logout/Exit\u001B[0m");
 
             logger.log(Level.INFO, "\u001B[32mPlease select an option: \u001B[0m");
@@ -29,10 +28,10 @@ public class AdminDashboard {
                         UserManagement.manageUsers();
                         break;
                     case 2:
-                        ContentManagement.manageContent();
+                        ContentManagement.manageContent(username);
                         break;
                     case 3:
-                        //ViewReports.viewReports();
+                        SystemLogs.manageLogs();
                         break;
                     case 4:
                         logger.log(Level.INFO, "\u001B[33mLogging out...\u001B[0m");

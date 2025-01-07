@@ -56,7 +56,7 @@ public class UserManagement {
         }
     }
 
-    public static void viewAllUsers() {
+    private static void viewAllUsers() {
         try (BufferedReader reader = new BufferedReader(new FileReader(Main.USERS_FILE))) {
             String line;
             logger.log(Level.INFO, "\u001B[36m------ All Registered Users ------\u001B[0m");
@@ -83,13 +83,13 @@ public class UserManagement {
         }
     }
 
-    public static void approveUser() {
+    private static void approveUser() {
         Scanner scanner = new Scanner(System.in);
         logger.log(Level.INFO, "\u001B[32mEnter the username to approve: \u001B[0m");
         String usernameToApprove = scanner.nextLine();
 
         File inputFile = new File(Main.USERS_FILE);
-        File tempFile = new File("C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp");
+        File tempFile = new File(Main.USERS_TEMP_FILE);
 
         boolean userFound = false;
 
@@ -128,7 +128,7 @@ public class UserManagement {
         }
     }
     
-   public static void createUser() {
+   private static void createUser() {
         Scanner scanner = new Scanner(System.in);
         logger.log(Level.INFO, "\u001B[32mEnter username: \u001B[0m");
         String username = scanner.nextLine();
@@ -169,13 +169,13 @@ public class UserManagement {
 
 
 
-     public static void denyUser() {
+     private static void denyUser() {
         Scanner scanner = new Scanner(System.in);
         logger.log(Level.INFO, "\u001B[32mEnter the username to deny: \u001B[0m");
         String usernameToDeny = scanner.nextLine();
 
-        File inputFile = new File("C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users");
-        File tempFile = new File("C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp");
+        File inputFile = new File(Main.USERS_FILE);
+        File tempFile = new File(Main.USERS_TEMP_FILE);
 
         boolean userFound = false;
 

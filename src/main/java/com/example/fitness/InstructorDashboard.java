@@ -24,7 +24,9 @@ public class InstructorDashboard {
                     "1. View Articles Related to Me\n" +
                     "2. View Profile\n" +
                     "3. Create an Article\n" +
-                    "4. Logout\n" +
+                    "4. Programs Dashboard\n" +
+                    "5. Feedback\n" +
+                    "6. Logout\n" +
                     "\u001B[0m");
             logger.log(Level.INFO, "\u001B[32mEnter your choice: \u001B[0m");
 
@@ -47,6 +49,16 @@ public class InstructorDashboard {
                         break;
                     }
                     case 4: {
+                        logger.log(Level.INFO, "\u001B[34mViewing programs dashboard...\u001B[0m");
+                        showProgramsDashboard(username);
+                        break;
+                    }
+                    case 5: {
+                        logger.log(Level.INFO, "\u001B[34mViewing Feedback...\u001B[0m");
+                        FeedbackHandler.showFeedbackDashboard(username,"Client");
+                        break;
+                    }
+                    case 6: {
                         logger.log(Level.INFO, "\u001B[33mLogging out... Goodbye, {0}!\u001B[0m", username);
                         return; // Exit the dashboard
                     }
@@ -60,6 +72,45 @@ public class InstructorDashboard {
             }
         }
     }
+    
+    public static void showProgramsDashboard(String instructorUsername) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            logger.log(Level.INFO, "\u001B[36m--- Programs Dashboard ---\u001B[0m\n" +
+                    "\u001B[32m1. View Programs\n" +
+                    "2. Add Program\n" +
+                    "3. Edit Program\n" +
+                    "4. Delete Program\n" +
+                    "5. View Subscribers\n" +
+                    "6. Exit\u001B[0m");
+            logger.log(Level.INFO, "\u001B[33mChoose an option: \u001B[0m");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    Programs.viewPrograms(instructorUsername);
+                    break;
+                case "2":
+                    Programs.addProgram(instructorUsername);
+                    break;
+                case "3":
+                    Programs.editProgram(instructorUsername);
+                    break;
+                case "4":
+                    Programs.deleteProgram(instructorUsername);
+                    break;
+                case "5":
+                    Programs.viewSubscribers(instructorUsername);
+                    break;
+                case "6":
+                    logger.log(Level.INFO, "\u001B[34mExiting Programs Dashboard...\u001B[0m");
+                    return;
+                default:
+                    logger.log(Level.WARNING, "\u001B[31mInvalid choice. Please try again.\u001B[0m");
+            }
+        }
+    }
+
 
     private static void viewArticles(String username) {
     List<String[]> articles = new ArrayList<>();
