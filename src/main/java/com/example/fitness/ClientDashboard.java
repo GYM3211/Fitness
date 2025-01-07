@@ -1,138 +1,143 @@
 package com.example.fitness;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class ClientDashboard{
-
-    private static final Logger logger = Logger.getLogger(ClientDashboard.class.getName());
+public class ClientDashboard {
 
     public static void showDashboard(String username) {
         Scanner scanner = new Scanner(System.in);
         int choice;
 
         while (true) {
-            logger.log(Level.INFO, "\u001B[36m------ Client Dashboard ------\n" +
-                    "1. View Profile\n" +
-                    "2. Read an Article\n" +
-                    "3. Fitness Goals\n" + 
-                    "4. Change Subscription\n" +
-                    "5. Programs Dashboard\n" +
-                    "6. Feedback\n" +
-                    "7. Logout\n" +
-                    "\u001B[0m");
-            logger.log(Level.INFO, "\u001B[32mEnter your choice: \u001B[0m");
+            System.out.println("------ Client Dashboard ------");
+            System.out.println("1. View Profile");
+            System.out.println("2. Read an Article");
+            System.out.println("3. Fitness Goals");
+            System.out.println("4. Change Subscription");
+            System.out.println("5. Programs Dashboard");
+            System.out.println("6. Feedback");
+            System.out.println("7. Logout");
+            System.out.print("Enter your choice: ");
 
             try {
                 choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 : {
-                        logger.log(Level.INFO, "\u001B[34mViewing profile...\u001B[0m");
+                    case 1:
+                        System.out.println("Viewing profile...");
                         viewProfile(username);
                         break;
-                    }
-                    case 2 : {
-                        logger.log(Level.INFO, "\u001B[34mReading an article...\u001B[0m");
+                    case 2:
+                        System.out.println("Reading an article...");
                         readArticles();
                         break;
-                    }
-                    case 3: {
-                        logger.log(Level.INFO, "\u001B[34mDisplaying fitness goals options...\u001B[0m");
+                    case 3:
+                        System.out.println("Displaying fitness goals options...");
                         showFitnessGoalDashboard(username);
                         break;
-                    }
-                    case 4 : {
-                        logger.log(Level.INFO, "\u001B[34mChanging subscription...\u001B[0m");
+                    case 4:
+                        System.out.println("Changing subscription...");
                         changeSubscription(username);
                         break;
-                    }
-                    case 5 : {
-                        logger.log(Level.INFO, "\u001B[34mViewing programs dashboard...\u001B[0m");
+                    case 5:
+                        System.out.println("Viewing programs dashboard...");
                         ProgramDashboardClient.showProgramsDashboard(username);
                         break;
-                    }
-                    case 6 : {
-                        logger.log(Level.INFO, "\u001B[34mViewing Feedback...\u001B[0m");
-                        FeedbackHandler.showFeedbackDashboard(username,"Instructor");
+                    case 6:
+                        System.out.println("Viewing Feedback...");
+                        // If your FeedbackHandler code is also logger-based, you can similarly adapt it
+                        FeedbackHandler.showFeedbackDashboard(username, "Instructor");
                         break;
-                    }
-                    case 7 : {
-                        logger.log(Level.INFO, "\u001B[33mLogging out... Goodbye, {0}!\u001B[0m", new Object[]{username});
+                    case 7:
+                        System.out.println("Logging out... Goodbye, " + username + "!");
                         return; // Exit the dashboard
-                    }
-                    default : logger.log(Level.WARNING, "\u001B[31mInvalid option! Please select a valid option.\u001B[0m");
+                    default:
+                        System.out.println("Invalid option! Please select a valid option.");
                 }
             } catch (NumberFormatException e) {
-                logger.log(Level.WARNING, "\u001B[31mInvalid input! Please enter a number.\u001B[0m");
+                System.out.println("Invalid input! Please enter a number.");
             }
         }
     }
 
-    private static void viewProfile(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.USERS_FILE))) {
+    public static void viewProfile(String username) {
+        File file = new File(Main.USERS_FILE);
+        if (!file.exists()) {
+            System.out.println("No user data file found. Cannot view profile.");
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] userDetails = line.split(",");
                 if (userDetails[0].trim().equals(username)) {
-                    logger.log(Level.INFO, "\u001B[34mProfile Details:\u001B[0m");
-                    logger.log(Level.INFO, "\u001B[34mUsername: {0}\nRole: {1}\nGender: {2}\nAge: {3}\nStatus: {4}\nSubscription: {5}\u001B[0m",
-                            new Object[]{userDetails[0].trim(), userDetails[2].trim(), userDetails[3].trim(), userDetails[4].trim(), userDetails[5].trim(), userDetails[6].trim()});
+                    System.out.println("Profile Details:");
+                    System.out.println("Username: " + userDetails[0].trim());
+                    System.out.println("Role: " + userDetails[2].trim());
+                    System.out.println("Gender: " + userDetails[3].trim());
+                    System.out.println("Age: " + userDetails[4].trim());
+                    System.out.println("Status: " + userDetails[5].trim());
+                    System.out.println("Subscription: " + userDetails[6].trim());
                     return;
                 }
             }
-            logger.log(Level.WARNING, "\u001B[31mNo profile found for username: {0}\u001B[0m", username);
+            System.out.println("No profile found for username: " + username);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading user data: {0}\u001B[0m", e.getMessage());
+            System.out.println("Error reading user data: " + e.getMessage());
         }
     }
 
-    private static void readArticles() {
+    public static void readArticles() {
         List<String[]> articles = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(Main.ARTICLES_FILE))) {
+        File file = new File(Main.ARTICLES_FILE);
+        if (!file.exists()) {
+            System.out.println("No articles file found.");
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] articleDetails = line.split(",");
-                if (articleDetails.length >= 5) { // Ensure there are enough details for an article
+                String[] articleDetails = line.split(",", 5);
+                if (articleDetails.length >= 5) {
                     articles.add(articleDetails);
-                    logger.log(Level.INFO, "\u001B[32mID: {0} - Title: {1}\u001B[0m", new Object[]{articleDetails[0], articleDetails[1]});
+                    System.out.println("ID: " + articleDetails[0] + " - Title: " + articleDetails[1]);
                 }
             }
 
             if (articles.isEmpty()) {
-                logger.log(Level.WARNING, "\u001B[31mNo articles available at the moment.\u001B[0m");
+                System.out.println("No articles available at the moment.");
                 return;
             }
 
             // Ask the client to choose an article by ID
             Scanner scanner = new Scanner(System.in);
-            logger.log(Level.INFO, "\u001B[32mEnter the article ID to read full details: \u001B[0m");
+            System.out.print("Enter the article ID to read full details: ");
             String articleId = scanner.nextLine();
 
             // Find and display the selected article
             boolean found = false;
             for (String[] article : articles) {
                 if (article[0].equals(articleId)) {
-                    logger.log(Level.INFO, "\u001B[36m---- Article Details ----\u001B[0m");
-                    logger.log(Level.INFO, "\u001B[32mID: {0}\nTitle: {1}\nAuthor: {2}\nPublish Date: {3}\nContent: {4}\u001B[0m",
-                            new Object[]{article[0], article[1], article[2], article[3], article[4]});
+                    System.out.println("---- Article Details ----");
+                    System.out.println("ID: " + article[0]);
+                    System.out.println("Title: " + article[1]);
+                    System.out.println("Author: " + article[2]);
+                    System.out.println("Publish Date: " + article[3]);
+                    System.out.println("Content: " + article[4]);
                     found = true;
                     break;
                 }
             }
 
             if (!found) {
-                logger.log(Level.WARNING, "\u001B[31mArticle with ID {0} not found.\u001B[0m", articleId);
+                System.out.println("Article with ID " + articleId + " not found.");
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading articles file: {0}\u001B[0m", e.getMessage());
+            System.out.println("Error reading articles file: " + e.getMessage());
         }
     }
 
@@ -140,12 +145,13 @@ public class ClientDashboard{
         Scanner scanner = new Scanner(System.in);
         int choice;
         while (true) {
-            logger.log(Level.INFO, "\u001B[36m------ Fitness Goals Dashboard ------\u001B[0m\n" +
-                    "\u001B[32m1. View My Fitness Goals\n" +
-                    "2. Add a New Fitness Goal\n" +
-                    "3. Delete a Fitness Goal\n" +
-                    "4. Back to Dashboard\u001B[0m");
-            logger.log(Level.INFO, "\u001B[33mChoose an option: \u001B[0m");
+            System.out.println("------ Fitness Goals Dashboard ------");
+            System.out.println("1. View My Fitness Goals");
+            System.out.println("2. Add a New Fitness Goal");
+            System.out.println("3. Delete a Fitness Goal");
+            System.out.println("4. Back to Dashboard");
+            System.out.print("Choose an option: ");
+
             try {
                 choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
@@ -159,103 +165,112 @@ public class ClientDashboard{
                         FitnessGoals.deleteFitnessGoal(username);
                         break;
                     case 4:
-                        logger.log(Level.INFO, "\u001B[33mReturning to Dashboard...\u001B[0m");
+                        System.out.println("Returning to Dashboard...");
                         return;
                     default:
-                        logger.log(Level.WARNING, "\u001B[31mInvalid option. Please try again.\u001B[0m");
+                        System.out.println("Invalid option. Please try again.");
                 }
             } catch (NumberFormatException e) {
-                logger.log(Level.WARNING, "\u001B[31mInvalid input! Please enter a number.\u001B[0m");
+                System.out.println("Invalid input! Please enter a number.");
             }
         }
     }
 
-    
-
-    private static void changeSubscription(String username) {
-        Scanner scanner = new Scanner(System.in);
-
+    public static void changeSubscription(String username) {
         // Read user data from file and find the user's current subscription status
         String currentSubscription = getCurrentSubscription(username);
-
-        logger.log(Level.INFO, "\u001B[32mYour current subscription: {0}\n", currentSubscription);
-        logger.log(Level.INFO, "\u001B[32mAvailable subscriptions: \n1. Free\n2. Basic\n3. Premium\n4. Lifetime\u001B[0m");
-        logger.log(Level.INFO, "\u001B[32mEnter the number of the subscription you want to switch to: \u001B[0m");
-        int choice = Integer.parseInt(scanner.nextLine());
-
-        String newSubscription = null;
-        switch (choice) {
-            case 1:
-                newSubscription = "Free";
-                break;
-            case 2:
-                newSubscription = "Basic";
-                break;
-            case 3:
-                newSubscription = "Premium";
-                break;
-            case 4:
-                newSubscription = "Lifetime";
-                break;
-            default:
-                newSubscription = null;
-                break;
+        if (currentSubscription == null) {
+            System.out.println("No subscription found or user not found. Cannot change subscription.");
+            return;
         }
 
+        System.out.println("Your current subscription: " + currentSubscription);
+        System.out.println("Available subscriptions: \n1. Free\n2. Basic\n3. Premium\n4. Lifetime");
+        System.out.print("Enter the number of the subscription you want to switch to: ");
 
-        if (newSubscription == null) {
-            logger.log(Level.WARNING, "\u001B[31mInvalid option! Subscription not changed.\u001B[0m");
+        Scanner scanner = new Scanner(System.in);
+        String newSubscription = null;
+        try {
+            int choice = Integer.parseInt(scanner.nextLine());
+            switch (choice) {
+                case 1:
+                    newSubscription = "Free";
+                    break;
+                case 2:
+                    newSubscription = "Basic";
+                    break;
+                case 3:
+                    newSubscription = "Premium";
+                    break;
+                case 4:
+                    newSubscription = "Lifetime";
+                    break;
+                default:
+                    System.out.println("Invalid option! Subscription not changed.");
+                    return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter a number.");
             return;
         }
 
         // Update the user's subscription in the file
         updateSubscription(username, newSubscription);
-        logger.log(Level.INFO, "\u001B[32mYour subscription has been changed to: {0}\n", newSubscription);
+        System.out.println("Your subscription has been changed to: " + newSubscription);
     }
 
     private static String getCurrentSubscription(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.USERS_FILE))) {
+        File file = new File(Main.USERS_FILE);
+        if (!file.exists()) {
+            return null;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] userDetails = line.split(",");
                 if (userDetails[0].trim().equals(username)) {
-                    return userDetails[6].trim();  // Assuming subscription is at index 6
+                    // Assuming subscription is at index 6
+                    return userDetails[6].trim();
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;  // Default case if no subscription found
+        return null;  // If user not found or file read fails
     }
 
-    
     private static void updateSubscription(String username, String newSubscription) {
-        try {
-            File file = new File(Main.USERS_FILE);
-            File tempFile = new File(Main.USERS_TEMP_FILE);
+        File file = new File(Main.USERS_FILE);
+        File tempFile = new File(Main.USERS_TEMP_FILE);
+        if (!file.exists()) {
+            System.out.println("Users file not found. Cannot update subscription.");
+            return;
+        }
 
+        try (
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
+        ) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] userDetails = line.split(",");
                 if (userDetails[0].trim().equals(username)) {
-                    userDetails[6] = newSubscription;  // Update the subscription in the array
+                    userDetails[6] = newSubscription;  // Update subscription
                     line = String.join(",", userDetails);
                 }
                 writer.write(line);
                 writer.newLine();
             }
-
-            writer.close();
-            reader.close();
-
-            // Delete the original file and rename the temporary file to the original file
-            file.delete();
-            tempFile.renameTo(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error updating subscription: " + e.getMessage());
+        }
+
+        // Replace original file with updated file
+        if (!file.delete()) {
+            System.out.println("Error deleting original users file.");
+        } else if (!tempFile.renameTo(file)) {
+            System.out.println("Error renaming temporary file to users file.");
         }
     }
 }

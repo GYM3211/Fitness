@@ -12,15 +12,15 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private static final Scanner scanner = new Scanner(System.in);
     public static String USERS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users";
-    protected static final String USERS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp.txt";
+    public static String USERS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\users_temp.txt";
     public static String ARTICLES_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\articles";
     protected static final String LOGS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\logs";
-    protected static final String FITNESS_GOALS_FILE = "\"C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\fitness_goals";
-    protected static final String FEEDBACK = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\feedback";
-    protected static final String SUBSCRIPTIONS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions";
-    protected static final String SUBSCRIPTIONS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions_temp";
-    protected static final String PROGRAMS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs";
-    protected static final String PROGRAMS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs_temp";
+    public static String FITNESS_GOALS_FILE = "\"C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\fitness_goals";
+    public static String FEEDBACK = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\feedback";
+    public static String SUBSCRIPTIONS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions";
+    public static String SUBSCRIPTIONS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\subscriptions_temp";
+    public static String PROGRAMS_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs";
+    public static String PROGRAMS_TEMP_FILE = "C:\\Users\\Sewar\\git\\gym\\src\\main\\java\\com\\example\\fitness\\programs_temp";
 
     public static void displayMenu() {
         int choice;

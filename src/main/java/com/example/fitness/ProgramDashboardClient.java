@@ -7,207 +7,222 @@ import java.util.logging.Logger;
 
 public class ProgramDashboardClient {
     
-    private static final Logger logger = Logger.getLogger(ProgramDashboardClient.class.getName());
-    
-      public static void showProgramsDashboard(String clientUsername) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            logger.log(Level.INFO, 
-            "\u001B[36m------ Programs Dashboard ------\u001B[0m\n" +
-            "\u001B[32m1. View All Programs\u001B[0m\n" +
-            "\u001B[32m2. View My Programs\u001B[0m\n" +
-            "\u001B[32m3. Subscribe to a Program\u001B[0m\n" +
-            "\u001B[32m4. Unsubscribe from a Program\u001B[0m\n" +
-            "\u001B[32m5. Exit Dashboard\u001B[0m\n" +
-            "\u001B[33mChoose an option: \u001B[0m");
+	 public static void showProgramsDashboard(String clientUsername) {
+	        Scanner scanner = new Scanner(System.in);
+	        while (true) {
+	            System.out.println("------ Programs Dashboard ------");
+	            System.out.println("1. View All Programs");
+	            System.out.println("2. View My Programs");
+	            System.out.println("3. Subscribe to a Program");
+	            System.out.println("4. Unsubscribe from a Program");
+	            System.out.println("5. Exit Dashboard");
+	            System.out.print("Choose an option: ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume the newline
+	            // Use nextLine() + parse to avoid partial consumption
+	            String choiceStr = scanner.nextLine();
+	            int choice;
+	            try {
+	                choice = Integer.parseInt(choiceStr);
+	            } catch (NumberFormatException e) {
+	                System.out.println("Invalid option. Please try again.");
+	                continue;
+	            }
 
-            switch (choice) {
-                case 1:
-                    viewAllPrograms();
-                    break;
-                case 2:
-                    viewMyPrograms(clientUsername);
-                    break;
-                case 3:
-                    subscribeToProgram(clientUsername);
-                    break;
-                case 4:
-                    unsubscribeFromProgram(clientUsername);
-                    break;
-                case 5:
-                    logger.log(Level.INFO, "\u001B[34mExiting Programs Dashboard...\u001B[0m");
-                    return;
-                default:
-                    logger.log(Level.WARNING, "\u001B[31mInvalid option. Please try again.\u001B[0m");
-            }
-        }
-    }
+	            switch (choice) {
+	                case 1:
+	                    viewAllPrograms();
+	                    break;
+	                case 2:
+	                    viewMyPrograms(clientUsername);
+	                    break;
+	                case 3:
+	                    subscribeToProgram(clientUsername);
+	                    break;
+	                case 4:
+	                    unsubscribeFromProgram(clientUsername);
+	                    break;
+	                case 5:
+	                    System.out.println("Exiting Programs Dashboard...");
+	                    return;
+	                default:
+	                    System.out.println("Invalid option. Please try again.");
+	            }
+	        }
+	    }
 
-    public static void viewAllPrograms() {
-        // Method to view all programs
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
-            String line;
-            boolean hasPrograms = false;
-            while ((line = br.readLine()) != null) {
-                String[] programDetails = line.split(",", 5);
-                String programId = programDetails[0];
-                String instructorUsername = programDetails[1];
-                String title = programDetails[2];
-                String description = programDetails[3];
-                String creationDate = programDetails[4];
-                logger.log(Level.INFO, "Program ID: {0}\nTitle: {1}\nInstructor: {2}\nDescription: {3}\nCreated on: {4}\n------------------------------------------", 
-                new Object[]{programId, title, instructorUsername, description, creationDate});
-                hasPrograms = true;
-            }
-            if (!hasPrograms) {
-                logger.log(Level.INFO, "\u001B[33mNo programs available at the moment.\u001B[0m");
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading programs file: {0}\u001B[0m", e.getMessage());
-        }
-    }
+	    public static void viewAllPrograms() {
+	        // Display all programs from Main.PROGRAMS_FILE
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
+	            String line;
+	            boolean hasPrograms = false;
+	            while ((line = br.readLine()) != null) {
+	                String[] programDetails = line.split(",", 5);
+	                if (programDetails.length == 5) {
+	                    String programId = programDetails[0];
+	                    String instructorUsername = programDetails[1];
+	                    String title = programDetails[2];
+	                    String description = programDetails[3];
+	                    String creationDate = programDetails[4];
 
-    public static void subscribeToProgram(String clientUsername) {
-        Scanner scanner = new Scanner(System.in);
-        logger.log(Level.INFO, "\u001B[32mEnter the ID of the program to subscribe to: \u001B[0m");
-        String programId = scanner.nextLine();
-        boolean programFound = false;
-        boolean alreadySubscribed = false;
+	                    System.out.println("Program ID: " + programId);
+	                    System.out.println("Title: " + title);
+	                    System.out.println("Instructor: " + instructorUsername);
+	                    System.out.println("Description: " + description);
+	                    System.out.println("Created on: " + creationDate);
+	                    System.out.println("------------------------------------------");
+	                    hasPrograms = true;
+	                }
+	            }
+	            if (!hasPrograms) {
+	                System.out.println("No programs available at the moment.");
+	            }
+	        } catch (IOException e) {
+	            System.out.println("Error reading programs file: " + e.getMessage());
+	        }
+	    }
 
-        // Check if the program exists in the programs file
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",", 5);
-                if (data[0].equals(programId)) {
-                    programFound = true;
-                    break; // Program found, no need to continue checking
-                }
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading the programs file: {0}\u001B[0m", e.getMessage());
-        }
+	    public static void subscribeToProgram(String clientUsername) {
+	        Scanner scanner = new Scanner(System.in);
+	        System.out.print("Enter the ID of the program to subscribe to: ");
+	        String programId = scanner.nextLine();
 
-        if (!programFound) {
-            logger.log(Level.WARNING, "\u001B[33mProgram not found! Please check the ID.\u001B[0m");
-            return;
-        }
+	        boolean programFound = false;
+	        boolean alreadySubscribed = false;
 
-        // Check if the user is already subscribed by reading the subscription file
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",", 2);
-                if (data[0].equals(clientUsername) && data[1].equals(programId)) {
-                    alreadySubscribed = true;
-                    break; // User already subscribed, no need to continue checking
-                }
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading the subscriptions file: {0}\u001B[0m", e.getMessage());
-        }
+	        // Check if the program exists
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                String[] data = line.split(",", 5);
+	                if (data.length == 5 && data[0].equals(programId)) {
+	                    programFound = true;
+	                    break;
+	                }
+	            }
+	        } catch (IOException e) {
+	            System.out.println("Error reading the programs file: " + e.getMessage());
+	        }
 
-        if (alreadySubscribed) {
-            logger.log(Level.WARNING, "\u001B[33mYou are already subscribed to this program.\u001B[0m");
-        } else {
-            // Add the subscription to the subscriptions file
-            try (FileWriter writer = new FileWriter(Main.SUBSCRIPTIONS_FILE, true)) {
-                writer.write(clientUsername + "," + programId + "\n");
-                logger.log(Level.INFO, "\u001B[34mYou have successfully subscribed to the program! \u001B[0m");
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, "\u001B[31mError writing to the subscriptions file: {0}\u001B[0m", e.getMessage());
-            }
-        }
-    }
-    
-    public static void viewMyPrograms(String clientUsername) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE))) {
-            String line;
-            boolean found = false;
+	        if (!programFound) {
+	            System.out.println("Program not found! Please check the ID.");
+	            return;
+	        }
 
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",", 2); // assuming it's [programId, clientUsername]
-                if (data[0].equals(clientUsername)) {
-                    String programId = data[1];
+	        // Check if user is already subscribed
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE))) {
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                String[] data = line.split(",", 2);
+	                // Format: clientUsername,programId
+	                if (data.length == 2 && data[0].equals(clientUsername) && data[1].equals(programId)) {
+	                    alreadySubscribed = true;
+	                    break;
+	                }
+	            }
+	        } catch (IOException e) {
+	            System.out.println("Error reading the subscriptions file: " + e.getMessage());
+	        }
 
-                    // Now, fetch the program details using programId from the programs file
-                    try (BufferedReader programReader = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
-                        String programLine;
-                        while ((programLine = programReader.readLine()) != null) {
-                            String[] programData = programLine.split(",", 5);
-                            if (programData[0].equals(programId)) {
-                                // Program found, print its details
-                                logger.log(Level.INFO, 
-                                        "Program ID: {0}\nTitle: {1}\nInstructor: {2}\nDescription: {3}\nCreation Date: {4}\n", 
-                                        new Object[]{programData[0], programData[2], programData[1], programData[3], programData[4]});
-                                found = true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, "\u001B[31mError reading the programs file: {0}\u001B[0m", e.getMessage());
-                    }
-                }
-            }
+	        if (alreadySubscribed) {
+	            System.out.println("You are already subscribed to this program.");
+	        } else {
+	            try (FileWriter writer = new FileWriter(Main.SUBSCRIPTIONS_FILE, true)) {
+	                writer.write(clientUsername + "," + programId + "\n");
+	                System.out.println("You have successfully subscribed to the program!");
+	            } catch (IOException e) {
+	                System.out.println("Error writing to the subscriptions file: " + e.getMessage());
+	            }
+	        }
+	    }
 
-            if (!found) {
-                logger.log(Level.INFO, "\u001B[33mYou are not subscribed to any programs.\u001B[0m");
-            }
+	    public static void viewMyPrograms(String clientUsername) {
+	        // Find all subscriptions for this user, then read the program details
+	        boolean foundAny = false;
 
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading the subscriptions file: {0}\u001B[0m", e.getMessage());
-        }
-    }
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE))) {
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                String[] data = line.split(",", 2);
+	                // Format: clientUsername,programId
+	                if (data.length == 2 && data[0].equals(clientUsername)) {
+	                    String programId = data[1];
 
-    
-    public static void unsubscribeFromProgram(String clientUsername) {
-    Scanner scanner = new Scanner(System.in);
-    logger.log(Level.INFO, "\u001B[32mEnter the ID of the program to unsubscribe from: \u001B[0m");
-    String programId = scanner.nextLine();
+	                    // Now fetch details from programs file
+	                    try (BufferedReader programReader = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
+	                        String programLine;
+	                        while ((programLine = programReader.readLine()) != null) {
+	                            String[] programData = programLine.split(",", 5);
+	                            if (programData.length == 5 && programData[0].equals(programId)) {
+	                                System.out.println("Program ID: " + programData[0]);
+	                                System.out.println("Title: " + programData[2]);
+	                                System.out.println("Instructor: " + programData[1]);
+	                                System.out.println("Description: " + programData[3]);
+	                                System.out.println("Creation Date: " + programData[4]);
+	                                System.out.println("------------------------------------------");
+	                                foundAny = true;
+	                            }
+	                        }
+	                    } catch (IOException e) {
+	                        System.out.println("Error reading the programs file: " + e.getMessage());
+	                    }
+	                }
+	            }
+	        } catch (IOException e) {
+	            System.out.println("Error reading the subscriptions file: " + e.getMessage());
+	        }
 
-    File tempFile = new File(Main.SUBSCRIPTIONS_TEMP_FILE);
-    boolean found = false;
+	        if (!foundAny) {
+	            System.out.println("You are not subscribed to any programs.");
+	        }
+	    }
 
-    try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE));
-         BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
+	    public static void unsubscribeFromProgram(String clientUsername) {
+	        Scanner scanner = new Scanner(System.in);
+	        System.out.print("Enter the ID of the program to unsubscribe from: ");
+	        String programId = scanner.nextLine();
 
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",", 2);
-            if (data[0].equals(clientUsername) && data[1].equals(programId)) {
-                found = true;
-            } else {
-                bw.write(line + "\n");
-            }
-        }
-    } catch (IOException e) {
-        logger.log(Level.SEVERE, "\u001B[31mError reading the subscriptions file: {0}\u001B[0m", e.getMessage());
-    }
+	        File tempFile = new File(Main.SUBSCRIPTIONS_TEMP_FILE);
+	        boolean found = false;
 
-    if (!found) {
-        logger.log(Level.WARNING, "\u001B[33mNo subscription found for this client to the program with ID: {0}\u001B[0m", programId);
-        return;
-    }
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE));
+	             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
 
-    // Ensure the original subscriptions file exists before renaming
-    File originalFile = new File(Main.SUBSCRIPTIONS_FILE);
-    if (!originalFile.exists()) {
-        logger.log(Level.SEVERE, "\u001B[31mOriginal subscriptions file does not exist.\u001B[0m");
-        return;
-    }
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                String[] data = line.split(",", 2);
+	                if (data.length == 2 && data[0].equals(clientUsername) && data[1].equals(programId)) {
+	                    found = true;
+	                    // skip writing => remove subscription
+	                } else {
+	                    bw.write(line);
+	                    bw.newLine();
+	                }
+	            }
+	        } catch (IOException e) {
+	            System.out.println("Error reading the subscriptions file: " + e.getMessage());
+	        }
 
-    // Attempt to delete the original file before renaming the temp file
-    if (originalFile.delete()) {
-        if (tempFile.renameTo(originalFile)) {
-            logger.log(Level.INFO, "\u001B[34mYou have successfully unsubscribed from the program. \u001B[0m");
-        } else {
-            logger.log(Level.SEVERE, "\u001B[31mError renaming the temporary file to original file.\u001B[0m");
-        }
-    } else {
-        logger.log(Level.SEVERE, "\u001B[31mError deleting the original subscriptions file.\u001B[0m");
-    }
-}
+	        if (!found) {
+	            System.out.println("No subscription found for this client to the program with ID: " + programId);
+	            return;
+	        }
+
+	        File originalFile = new File(Main.SUBSCRIPTIONS_FILE);
+	        if (!originalFile.exists()) {
+	            System.out.println("Original subscriptions file does not exist.");
+	            return;
+	        }
+
+	        if (originalFile.delete()) {
+	            if (tempFile.renameTo(originalFile)) {
+	                System.out.println("You have successfully unsubscribed from the program.");
+	            } else {
+	                System.out.println("Error renaming the temporary file to original file.");
+	            }
+	        } else {
+	            System.out.println("Error deleting the original subscriptions file.");
+	        }
+	    }
+
 
 }

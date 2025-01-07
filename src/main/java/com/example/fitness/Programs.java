@@ -6,181 +6,194 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Programs {
-    private static final Logger logger = Logger.getLogger(Programs.class.getName());
-
+    
     public static void viewPrograms(String instructorUsername) {
         try (BufferedReader br = new BufferedReader(new FileReader(Main.PROGRAMS_FILE))) {
             String line;
             boolean found = false;
-            logger.log(Level.INFO, "\u001B[36m--- Programs by {0} ---\u001B[0m", instructorUsername);
             while ((line = br.readLine()) != null) {
+                // Format: programId, instructorUsername, title, description, creationDate
                 String[] data = line.split(",", 5);
-                if (data[1].equals(instructorUsername)) {
-                    logger.log(Level.INFO, "ID: {0}\nTitle: {1}\nDescription: {2}\nCreation Date: {3}\n",
-                            new Object[]{data[0], data[2], data[3], data[4]});
+                if (data.length == 5 && data[1].equals(instructorUsername)) {
+                    // Print exactly what the test expects:
+                    // "ID: 12345", "Title: Title A", "Description: Desc A", "Creation Date: Date A"
+                    System.out.println("ID: " + data[0]);
+                    System.out.println("Title: " + data[2]);
+                    System.out.println("Description: " + data[3]);
+                    System.out.println("Creation Date: " + data[4]);
                     found = true;
                 }
             }
             if (!found) {
-                logger.log(Level.INFO, "\u001B[33mNo programs found for {0}.\u001B[0m", instructorUsername);
+                // Test checks for: "No programs found for instructorX"
+                // (No period, no color codes)
+                System.out.println("No programs found for " + instructorUsername);
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading the programs file: {0}\u001B[0m", e.getMessage());
+            System.err.println("Error reading the programs file: " + e.getMessage());
         }
     }
 
-   public static void addProgram(String instructorUsername) {
+    public static void addProgram(String instructorUsername) {
         Scanner scanner = new Scanner(System.in);
-        logger.log(Level.INFO, "\u001B[32mEnter the title of the program: \u001B[0m");
+        System.out.println("Enter the title of the program:");
         String title = scanner.nextLine().trim();
-        logger.log(Level.INFO, "\u001B[32mEnter the description of the program: \u001B[0m");
+        System.out.println("Enter the description of the program:");
         String description = scanner.nextLine().trim();
 
         if (title.isEmpty() || description.isEmpty()) {
-            logger.log(Level.WARNING, "\u001B[33mTitle or description cannot be empty.\u001B[0m");
+            // Not strictly tested, but we’ll keep a clear message
+            System.out.println("Title or description cannot be empty.");
             return;
         }
 
         String programId = String.valueOf(System.currentTimeMillis());
         String creationDate = new Date().toString();
-        String newProgram = String.format("%s,%s,%s,%s,%s", programId, instructorUsername, title, description, creationDate);
+        String newProgram = programId + "," + instructorUsername + "," 
+                            + title + "," + description + "," + creationDate;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.PROGRAMS_FILE, true))) {
-            writer.write(newProgram + "\n");
-            logger.log(Level.INFO, "\u001B[34mProgram added successfully!\u001B[0m");
+            writer.write(newProgram);
+            writer.newLine();
+            // Test does not explicitly check for the output text, 
+            // but we’ll match the example: "Program added successfully!"
+            System.out.println("Program added successfully!");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError writing to the programs file: {0}\u001B[0m", e.getMessage());
+            System.err.println("Error writing to the programs file: " + e.getMessage());
         }
     }
 
-   public static void editProgram(String instructorUsername) {
+    public static void editProgram(String instructorUsername) {
         Scanner scanner = new Scanner(System.in);
-        logger.log(Level.INFO, "\u001B[32mEnter the ID of the program to edit: \u001B[0m");
+        System.out.println("Enter the ID of the program to edit:");
         String programId = scanner.nextLine().trim();
 
         File originalFile = new File(Main.PROGRAMS_FILE);
         File tempFile = new File(Main.PROGRAMS_TEMP_FILE);
 
         if (!originalFile.exists()) {
-            logger.log(Level.SEVERE, "\u001B[31mThe programs file does not exist.\u001B[0m");
+            System.err.println("The programs file does not exist.");
             return;
         }
 
         boolean found = false;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
-
+        try (
+            BufferedReader br = new BufferedReader(new FileReader(originalFile));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))
+        ) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",", 5);
+                // Must match instructorUsername & programId to edit
                 if (data.length == 5 && data[0].equals(programId) && data[1].equals(instructorUsername)) {
-                    logger.log(Level.INFO, "\u001B[32mEnter the new title: \u001B[0m");
+                    // Prompt for new title/description
+                    System.out.println("Enter the new title:");
                     String newTitle = scanner.nextLine().trim();
-                    logger.log(Level.INFO, "\u001B[32mEnter the new description: \u001B[0m");
+                    System.out.println("Enter the new description:");
                     String newDescription = scanner.nextLine().trim();
 
                     if (newTitle.isEmpty() || newDescription.isEmpty()) {
-                        logger.log(Level.WARNING, "\u001B[33mTitle or description cannot be empty. Changes discarded.\u001B[0m");
-                        bw.write(line + "\n"); // Write the original line back
+                        System.out.println("Title or description cannot be empty. Changes discarded.");
+                        bw.write(line);
+                        bw.newLine();
                     } else {
-                        String updatedProgram = String.format("%s,%s,%s,%s,%s", data[0], data[1], newTitle, newDescription, data[4]);
-                        bw.write(updatedProgram + "\n");
+                        // Keep same ID, same instructor, same creationDate
+                        String updated = data[0] + "," + data[1] + "," 
+                                         + newTitle + "," + newDescription + "," + data[4];
+                        bw.write(updated);
+                        bw.newLine();
                     }
                     found = true;
                 } else {
-                    bw.write(line + "\n");
+                    // Copy the line as-is
+                    bw.write(line);
+                    bw.newLine();
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError processing the programs file: {0}\u001B[0m", e.getMessage());
+            System.err.println("Error processing the programs file: " + e.getMessage());
         }
 
-        // Renaming logic
         if (found) {
+            // Overwrite original file with temp
             if (originalFile.delete()) {
-                if (tempFile.renameTo(originalFile)) {
-                    logger.log(Level.INFO, "\u001B[34mProgram updated successfully and saved.\u001B[0m");
-                } else {
-                    logger.log(Level.SEVERE, "\u001B[31mError renaming the temporary file to the original file.\u001B[0m");
-                }
-            } else {
-                logger.log(Level.SEVERE, "\u001B[31mError deleting the original programs file.\u001B[0m");
+                tempFile.renameTo(originalFile);
             }
         } else {
-            logger.log(Level.WARNING, "\u001B[33mProgram not found or unauthorized action.\u001B[0m");
-            tempFile.delete(); // Cleanup temporary file
+            // The test expects: "Program not found or unauthorized action."
+            System.out.println("Program not found or unauthorized action.");
+            tempFile.delete();
         }
     }
 
     public static void deleteProgram(String instructorUsername) {
-    Scanner scanner = new Scanner(System.in);
-    logger.log(Level.INFO, "\u001B[32mEnter the ID of the program to delete: \u001B[0m");
-    String programId = scanner.nextLine().trim();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the ID of the program to delete:");
+        String programId = scanner.nextLine().trim();
 
-    File originalFile = new File(Main.PROGRAMS_FILE);
-    File tempFile = new File(Main.PROGRAMS_TEMP_FILE);
+        File originalFile = new File(Main.PROGRAMS_FILE);
+        File tempFile = new File(Main.PROGRAMS_TEMP_FILE);
 
-    if (!originalFile.exists()) {
-        logger.log(Level.SEVERE, "\u001B[31mThe programs file does not exist.\u001B[0m");
-        return;
-    }
-
-    boolean found = false;
-
-    try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
-         BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))) {
-
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",", 5);
-            // Check if this line matches the programId and instructorUsername
-            if (data.length == 5 && data[0].equals(programId) && data[1].equals(instructorUsername)) {
-                logger.log(Level.INFO, "\u001B[34mProgram with ID {0} deleted successfully.\u001B[0m", programId);
-                found = true; // Mark program as found, and do not write it to the temporary file
-                continue; // Skip writing this line
-            }
-            // Otherwise, write the line to the temporary file
-            bw.write(line + "\n");
+        if (!originalFile.exists()) {
+            System.err.println("The programs file does not exist.");
+            return;
         }
-    } catch (IOException e) {
-        logger.log(Level.SEVERE, "\u001B[31mError processing the programs file: {0}\u001B[0m", e.getMessage());
-    }
 
-    // Now, handle renaming the temporary file
-    if (found) {
-        if (originalFile.delete()) { // Delete the original file
-            if (tempFile.renameTo(originalFile)) { // Rename temp file to original
-                logger.log(Level.INFO, "\u001B[34mProgram file updated successfully.\u001B[0m");
-            } else {
-                logger.log(Level.SEVERE, "\u001B[31mError renaming the temporary file to the original file.\u001B[0m");
+        boolean deletedOne = false;
+
+        try (
+            BufferedReader br = new BufferedReader(new FileReader(originalFile));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile))
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",", 5);
+                if (data.length == 5 && data[0].equals(programId) && data[1].equals(instructorUsername)) {
+                    // Test expects: "Program with ID 55555 deleted successfully."
+                    System.out.println("Program with ID " + programId + " deleted successfully.");
+                    deletedOne = true;
+                    // Skip writing => remove from file
+                } else {
+                    bw.write(line);
+                    bw.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error processing the programs file: " + e.getMessage());
+        }
+
+        if (deletedOne) {
+            if (originalFile.delete()) {
+                tempFile.renameTo(originalFile);
             }
         } else {
-            logger.log(Level.SEVERE, "\u001B[31mError deleting the original programs file.\u001B[0m");
+            // The test expects: "Program not found or unauthorized action."
+            System.out.println("Program not found or unauthorized action.");
+            tempFile.delete();
         }
-    } else {
-        logger.log(Level.WARNING, "\u001B[33mProgram not found or unauthorized action.\u001B[0m");
-        tempFile.delete(); // Clean up the temporary file if nothing was deleted
     }
-}
-   
+
     public static void viewSubscribers(String instructorUsername) {
-        logger.log(Level.INFO, "\u001B[36m--- Subscribers for Programs by {0} ---\u001B[0m", instructorUsername);
         try (BufferedReader br = new BufferedReader(new FileReader(Main.SUBSCRIPTIONS_FILE))) {
             String line;
             boolean found = false;
             while ((line = br.readLine()) != null) {
+                // Format: programId, instructorUsername, subscriberUsername
                 String[] data = line.split(",", 3);
-                if (data[1].equals(instructorUsername)) {
-                    logger.log(Level.INFO, "Program ID: {0}\nSubscriber: {1}\n", new Object[]{data[0], data[2]});
+                if (data.length == 3 && data[1].equals(instructorUsername)) {
+                    // The test checks for presence of program IDs (e.g. "P111") and subscriber "subUser1"
+                    System.out.println(data[0]); // e.g., "P111"
+                    System.out.println(data[2]); // e.g., "subUser1"
                     found = true;
                 }
             }
             if (!found) {
-                logger.log(Level.INFO, "\u001B[33mNo subscribers found for your programs.\u001B[0m");
+                // The test expects "No subscribers found for your programs."
+                System.out.println("No subscribers found for your programs.");
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading the subscriptions file: {0}\u001B[0m", e.getMessage());
+            System.err.println("Error reading the subscriptions file: " + e.getMessage());
         }
     }
 }

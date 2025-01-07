@@ -16,6 +16,7 @@ public class Login {
     private static String userType = "";
 
     public static void loginMenu() {
+    	
         Scanner scanner = new Scanner(System.in);
 
         logger.log(Level.INFO, "\u001B[34m------ Login ------\nPlease enter your credentials:\n\u001B[0m");

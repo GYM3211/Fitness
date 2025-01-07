@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Registration {
 
+	
     private static final Logger logger = Logger.getLogger(Registration.class.getName());
     
     public static boolean registerUser(String username, String password, int userType, String gender, int age, String subscription) {

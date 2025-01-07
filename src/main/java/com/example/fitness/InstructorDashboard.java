@@ -11,200 +11,234 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class InstructorDashboard {
+	public class InstructorDashboard {
 
-    private static final Logger logger = Logger.getLogger(InstructorDashboard.class.getName());
+	    public static void showDashboard(String username) {
+	        Scanner scanner = new Scanner(System.in);
+	        int choice;
 
-    public static void showDashboard(String username) {
-        Scanner scanner = new Scanner(System.in);
-        int choice;
+	        while (true) {
+	            // Minimal user menu
+	            System.out.println("------ Instructor Dashboard ------\n" +
+	                    "1. View Articles Related to Me\n" +
+	                    "2. View Profile\n" +
+	                    "3. Create an Article\n" +
+	                    "4. Programs Dashboard\n" +
+	                    "5. Feedback\n" +
+	                    "6. Logout\n");
+	            System.out.print("Enter your choice: ");
 
-        while (true) {
-            logger.log(Level.INFO, "\u001B[36m------ Instructor Dashboard ------\n" +
-                    "1. View Articles Related to Me\n" +
-                    "2. View Profile\n" +
-                    "3. Create an Article\n" +
-                    "4. Programs Dashboard\n" +
-                    "5. Feedback\n" +
-                    "6. Logout\n" +
-                    "\u001B[0m");
-            logger.log(Level.INFO, "\u001B[32mEnter your choice: \u001B[0m");
+	            try {
+	                choice = Integer.parseInt(scanner.nextLine());
+	                switch (choice) {
+	                
+	                    case 1:
+	                        System.out.println("Viewing articles related to you...");
+	                        viewArticles(username);
+	                        break;
+	                    case 2:
+	                        System.out.println("Viewing profile...");
+	                        viewProfile(username);
+	                        break;
+	                    case 3:
+	                        System.out.println("Creating an article...");
+	                        createArticle(username);
+	                        break;
+	                    case 4:
+	                        System.out.println("Viewing programs dashboard...");
+	                        showProgramsDashboard(username);
+	                        break;
+	                    case 5:
+	                        System.out.println("Viewing Feedback...");
+	                        // Make sure FeedbackHandler.showFeedbackDashboard(...) works in your project
+	                        FeedbackHandler.showFeedbackDashboard(username, "Client");
+	                        break;
+	                    case 6:
+	                        System.out.println("Logging out... Goodbye, " + username + "!");
+	                        return; // Exit the dashboard
+	                    default:
+	                        System.out.println("Invalid option! Please select a valid option.");
+	                        break;
+	                }
+	            } catch (NumberFormatException e) {
+	                System.out.println("Invalid input! Please enter a number.");
+	            }
+	        }
+	    }
 
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                switch (choice) {
-                    case 1: {
-                        logger.log(Level.INFO, "\u001B[34mViewing articles related to you...\u001B[0m");
-                        viewArticles(username);
-                        break;
-                    }
-                    case 2: {
-                        logger.log(Level.INFO, "\u001B[34mViewing profile...\u001B[0m");
-                        viewProfile(username);
-                        break;
-                    }
-                    case 3: {
-                        logger.log(Level.INFO, "\u001B[34mCreating an article...\u001B[0m");
-                        createArticle(username);
-                        break;
-                    }
-                    case 4: {
-                        logger.log(Level.INFO, "\u001B[34mViewing programs dashboard...\u001B[0m");
-                        showProgramsDashboard(username);
-                        break;
-                    }
-                    case 5: {
-                        logger.log(Level.INFO, "\u001B[34mViewing Feedback...\u001B[0m");
-                        FeedbackHandler.showFeedbackDashboard(username,"Client");
-                        break;
-                    }
-                    case 6: {
-                        logger.log(Level.INFO, "\u001B[33mLogging out... Goodbye, {0}!\u001B[0m", username);
-                        return; // Exit the dashboard
-                    }
-                    default: {
-                        logger.log(Level.WARNING, "\u001B[31mInvalid option! Please select a valid option.\u001B[0m");
-                        break;
-                    }
-                }
-            } catch (NumberFormatException e) {
-                logger.log(Level.WARNING, "\u001B[31mInvalid input! Please enter a number.\u001B[0m");
-            }
-        }
-    }
-    
-    public static void showProgramsDashboard(String instructorUsername) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            logger.log(Level.INFO, "\u001B[36m--- Programs Dashboard ---\u001B[0m\n" +
-                    "\u001B[32m1. View Programs\n" +
-                    "2. Add Program\n" +
-                    "3. Edit Program\n" +
-                    "4. Delete Program\n" +
-                    "5. View Subscribers\n" +
-                    "6. Exit\u001B[0m");
-            logger.log(Level.INFO, "\u001B[33mChoose an option: \u001B[0m");
-            String choice = scanner.nextLine();
+	    public static void showProgramsDashboard(String instructorUsername) {
+	        Scanner scanner = new Scanner(System.in);
+	        while (true) {
+	            System.out.println("--- Programs Dashboard ---\n" +
+	                    "1. View Programs\n" +
+	                    "2. Add Program\n" +
+	                    "3. Edit Program\n" +
+	                    "4. Delete Program\n" +
+	                    "5. View Subscribers\n" +
+	                    "6. Exit");
+	            System.out.print("Choose an option: ");
+	            String choice = scanner.nextLine();
 
-            switch (choice) {
-                case "1":
-                    Programs.viewPrograms(instructorUsername);
-                    break;
-                case "2":
-                    Programs.addProgram(instructorUsername);
-                    break;
-                case "3":
-                    Programs.editProgram(instructorUsername);
-                    break;
-                case "4":
-                    Programs.deleteProgram(instructorUsername);
-                    break;
-                case "5":
-                    Programs.viewSubscribers(instructorUsername);
-                    break;
-                case "6":
-                    logger.log(Level.INFO, "\u001B[34mExiting Programs Dashboard...\u001B[0m");
-                    return;
-                default:
-                    logger.log(Level.WARNING, "\u001B[31mInvalid choice. Please try again.\u001B[0m");
-            }
-        }
-    }
+	            switch (choice) {
+	                case "1":
+	                    Programs.viewPrograms(instructorUsername);
+	                    break;
+	                case "2":
+	                    Programs.addProgram(instructorUsername);
+	                    break;
+	                case "3":
+	                    Programs.editProgram(instructorUsername);
+	                    break;
+	                case "4":
+	                    Programs.deleteProgram(instructorUsername);
+	                    break;
+	                case "5":
+	                    Programs.viewSubscribers(instructorUsername);
+	                    break;
+	                case "6":
+	                    System.out.println("Exiting Programs Dashboard...");
+	                    return;
+	                default:
+	                    System.out.println("Invalid choice. Please try again.");
+	            }
+	        }
+	    }
 
+	    //-------------------------------------------------------------------------
+	    // This method is what your tests call "viewArticles(username)"
+	    //-------------------------------------------------------------------------
+	    public static void viewArticles(String username) {
+	        List<String[]> articles = new ArrayList<>();
 
-    private static void viewArticles(String username) {
-    List<String[]> articles = new ArrayList<>();
+	        // Read articles from Main.ARTICLES_FILE
+	        try (BufferedReader reader = new BufferedReader(new FileReader(Main.ARTICLES_FILE))) {
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                String[] articleDetails = line.split(",", 5);
+	                // Format: [0]=articleId, [1]=title, [2]=author, [3]=publishDate, [4]=content
+	                if (articleDetails.length >= 5 && articleDetails[2].trim().equals(username)) {
+	                    articles.add(articleDetails);
+	                    // The test expects lines like: "ID: A111 - Title: Article One"
+	                    System.out.println("ID: " + articleDetails[0] + " - Title: " + articleDetails[1]);
+	                }
+	            }
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(Main.ARTICLES_FILE))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] articleDetails = line.split(",");
-            if (articleDetails.length >= 5 && articleDetails[2].trim().equals(username)) {
-                articles.add(articleDetails);
-                logger.log(Level.INFO, "\u001B[32mID: {0} - Title: {1}\u001B[0m", new Object[]{articleDetails[0], articleDetails[1]});
-            }
-        }
+	            if (articles.isEmpty()) {
+	                // The test expects EXACT: "No articles found related to you."
+	                System.out.println("No articles found related to you.");
+	                return;
+	            }
 
-        if (articles.isEmpty()) {
-            logger.log(Level.WARNING, "\u001B[31mNo articles found related to you.\u001B[0m");
-            return;
-        }
+	            // Ask the instructor to choose an article by ID
+	            Scanner scanner = new Scanner(System.in);
+	            System.out.print("Enter the article ID to read full details: ");
+	            String articleId = scanner.nextLine();
 
-        // Ask the instructor to choose an article by ID
-        Scanner scanner = new Scanner(System.in);
-        logger.log(Level.INFO, "\u001B[32mEnter the article ID to read full details: \u001B[0m");
-        String articleId = scanner.nextLine();
+	            // Find and display the selected article
+	            boolean found = false;
+	            for (String[] article : articles) {
+	                if (article[0].equals(articleId)) {
+	                    // The test expects:
+	                    //  "---- Article Details ----"
+	                    //   "ID: A111"
+	                    //   "Title: Article One"
+	                    //   "Author: instructorA"
+	                    //   "Publish Date: 2025-01-01"
+	                    //   "Content: Some content"
+	                    System.out.println("---- Article Details ----");
+	                    System.out.println("ID: " + article[0]);
+	                    System.out.println("Title: " + article[1]);
+	                    System.out.println("Author: " + article[2]);
+	                    System.out.println("Publish Date: " + article[3]);
+	                    System.out.println("Content: " + article[4]);
+	                    found = true;
+	                    break;
+	                }
+	            }
 
-        // Find and display the selected article
-        boolean found = false;
-        for (String[] article : articles) {
-            if (article[0].equals(articleId)) {
-                logger.log(Level.INFO, "\u001B[36m---- Article Details ----\u001B[0m");
-                logger.log(Level.INFO, "\u001B[32mID: {0}\nTitle: {1}\nAuthor: {2}\nPublish Date: {3}\nContent: {4}\u001B[0m",
-                        new Object[]{article[0], article[1], article[2], article[3], article[4]});
-                found = true;
-                break;
-            }
-        }
+	            if (!found) {
+	                // The test expects: "Article with ID {0} not found."
+	                System.out.println("Article with ID " + articleId + " not found.");
+	            }
 
-        if (!found) {
-            logger.log(Level.WARNING, "\u001B[31mArticle with ID {0} not found.\u001B[0m", articleId);
-        }
+	        } catch (IOException e) {
+	            System.err.println("Error reading articles file: " + e.getMessage());
+	        }
+	    }
 
-    } catch (IOException e) {
-        logger.log(Level.SEVERE, "\u001B[31mError reading articles file: {0}\u001B[0m", e.getMessage());
-    }
-}
+	    //-------------------------------------------------------------------------
+	    // This method is tested by "viewProfile() - shows correct profile details"
+	    //-------------------------------------------------------------------------
+	    public static void viewProfile(String username) {
+	        // The test expects lines like:
+	        // "Username: instructorX"
+	        // "Role: Instructor"
+	        // "Gender: Male"
+	        // "Age: 35"
+	        // "Status: Active"
+	        // "Subscription: Monthly"
+	        boolean found = false;
+	        try (BufferedReader br = new BufferedReader(new FileReader(Main.USERS_FILE))) {
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                // Format: [0]=username, [1]=???, [2]=role, [3]=gender, [4]=age, [5]=status, [6]=subscription
+	                String[] userDetails = line.split(",");
+	                if (userDetails[0].trim().equals(username)) {
+	                    System.out.println("Username: " + userDetails[0].trim());
+	                    System.out.println("Role: " + userDetails[2].trim());
+	                    System.out.println("Gender: " + userDetails[3].trim());
+	                    System.out.println("Age: " + userDetails[4].trim());
+	                    System.out.println("Status: " + userDetails[5].trim());
+	                    System.out.println("Subscription: " + userDetails[6].trim());
+	                    found = true;
+	                    break;
+	                }
+	            }
+	        } catch (IOException e) {
+	            System.err.println("Error reading user data: " + e.getMessage());
+	        }
 
+	        if (!found) {
+	            // Test expects EXACT: "No profile found for username: instructorX"
+	            System.out.println("No profile found for username: " + username);
+	        }
+	    }
 
-     private static void viewProfile(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.USERS_FILE))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] userDetails = line.split(",");
-                if (userDetails[0].trim().equals(username)) {
-                    logger.log(Level.INFO, "\u001B[34mProfile Details:\u001B[0m");
-                    logger.log(Level.INFO, "\u001B[34mUsername: {0}\nRole: {1}\nGender: {2}\nAge: {3}\nStatus: {4}\nSubscription: {5}\u001B[0m",
-                            new Object[]{userDetails[0].trim(), userDetails[2].trim(), userDetails[3].trim(), userDetails[4].trim(), userDetails[5].trim(), userDetails[6].trim()});
-                    return;
-                }
-            }
-            logger.log(Level.WARNING, "\u001B[31mNo profile found for username: {0}\u001B[0m", username);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading user data: {0}\u001B[0m", e.getMessage());
-        }
-    }
+	    //-------------------------------------------------------------------------
+	    // This method is tested by "createArticle() - successfully creates a new article"
+	    //-------------------------------------------------------------------------
+	    public static void createArticle(String username) {
+	        Scanner scanner = new Scanner(System.in);
 
-   private static void createArticle(String username) {
-        Scanner scanner = new Scanner(System.in);
+	        // Ask for article details
+	        System.out.print("Enter the article title: ");
+	        String title = scanner.nextLine();
 
-        // Ask for article details
-        logger.log(Level.INFO, "\u001B[32mEnter the article title: \u001B[0m");
-        String title = scanner.nextLine();
+	        System.out.print("Enter the article content: ");
+	        String content = scanner.nextLine();
 
-        logger.log(Level.INFO, "\u001B[32mEnter the article content: \u001B[0m");
-        String content = scanner.nextLine();
+	        // Get the current date
+	        String publishDate = java.time.LocalDate.now().toString();
 
-        // Get the current date
-        String publishDate = java.time.LocalDate.now().toString();
+	        // Create article entry
+	        String articleId = generateArticleId();  // e.g. System.currentTimeMillis()
+	        String author = username;
 
-        // Create article entry
-        String articleId = generateArticleId();  // Implement a method to generate unique ID for each article
-        String author = username;
+	        // Save article to file
+	        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
+	            // Format: articleId, title, author, publishDate, content
+	            writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
+	            writer.newLine();
+	            System.out.println("Article created successfully with ID: " + articleId);
+	        } catch (IOException e) {
+	            System.err.println("Error saving article: " + e.getMessage());
+	        }
+	    }
 
-        // Save article to file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Main.ARTICLES_FILE, true))) {
-            writer.write(articleId + "," + title + "," + author + "," + publishDate + "," + content);
-            writer.newLine();
-            logger.log(Level.INFO, "\u001B[32mArticle created successfully with ID: {0}\u001B[0m", articleId);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError saving article: {0}\u001B[0m", e.getMessage());
-        }
-    }
+	    private static String generateArticleId() {
+	        // Generate a unique ID for the article, e.g. current time
+	        return String.valueOf(System.currentTimeMillis());
+	    }
 
-    private static String generateArticleId() {
-        // Generate a unique ID for the article, this can be based on the current time or a UUID
-        return String.valueOf(System.currentTimeMillis());
-    }
 
 }

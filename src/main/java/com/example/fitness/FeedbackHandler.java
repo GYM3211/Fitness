@@ -1,84 +1,112 @@
 package com.example.fitness;
+
 import java.io.*;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FeedbackHandler {
-    private static final Logger logger = Logger.getLogger(FeedbackHandler.class.getName());
 
-    public static void sendFeedback(String username , String userType) {
+    public static void sendFeedback(String username, String userType) {
         Scanner scanner = new Scanner(System.in);
-        logger.log(Level.INFO, "\u001b[32mEnter {0}''s username: \u001b[0m", userType);
-        String instructorUsername = scanner.nextLine();
 
-        logger.log(Level.INFO, "\u001B[32mEnter your feedback message: \u001B[0m");
-        String message = scanner.nextLine();
+        System.out.print("Enter " + userType + "'s username: ");
+        // Trim here to prevent trailing whitespace from messing up comparisons
+        String instructorUsername = scanner.nextLine().trim();
 
-        String feedbackId = String.valueOf(System.currentTimeMillis()); // Unique ID based on current time
+        System.out.print("Enter your feedback message: ");
+        // Trim here too, so "Hello instructor, nice session.\n"
+        // won't include trailing newline/spaces
+        String message = scanner.nextLine().trim();
+
+        String feedbackId = String.valueOf(System.currentTimeMillis());
         String creationDate = java.time.LocalDate.now().toString();
 
-        String feedback = String.format("%s,%s,%s,%s,%s", feedbackId, instructorUsername, username, message, creationDate);
+        // Format => ID, instructorUsername, clientUsername, message, creationDate
+        String feedback = String.format(
+            "%s,%s,%s,%s,%s",
+            feedbackId, instructorUsername, username, message, creationDate
+        );
 
-        try (FileWriter writer = new FileWriter(Main.FEEDBACK, true)) {
+        File file = new File(Main.FEEDBACK);
+        try (FileWriter writer = new FileWriter(file, true)) {
             writer.write(feedback + "\n");
-            logger.log(Level.INFO, "\u001B[34mFeedback sent successfully! \u001B[0m");
+            System.out.println("Feedback sent successfully!");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError writing feedback: {0}\u001B[0m", e.getMessage());
+            System.out.println("Error writing feedback: " + e.getMessage());
         }
     }
 
-   public static void viewAllFeedback(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.FEEDBACK))) {
-            String line;
-            boolean found = false;
-            while ((line = br.readLine()) != null) {
-                String[] feedbackData = line.split(",");
-                String feedbackId = feedbackData[0];
-                String instructorUsername = feedbackData[1];
-                String clientUsername = feedbackData[2];
-                String message = feedbackData[3];
-                String creationDate = feedbackData[4];
+    public static void viewAllFeedback(String username) {
+        File file = new File(Main.FEEDBACK);
+        if (!file.exists()) {
+            System.out.println("No feedback file found.");
+            return;
+        }
 
+        boolean foundAny = false;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] feedbackData = line.split(",", 5);
+                if (feedbackData.length < 5) continue;
+
+                String feedbackId         = feedbackData[0];
+                String instructorUsername = feedbackData[1];
+                String clientUsername     = feedbackData[2];
+                String message           = feedbackData[3];
+                String creationDate      = feedbackData[4];
+
+                // Show feedback if user is either the instructor or the client
                 if (clientUsername.equals(username) || instructorUsername.equals(username)) {
-                    logger.log(Level.INFO, "\n\u001B[36mFeedback ID: {0}\nInstructor: {1}\nClient: {2}\nMessage: {3}\nDate: {4}\n", 
-                            new Object[]{feedbackId, instructorUsername, clientUsername, message, creationDate});
-                    found = true;
+                    System.out.println("Feedback ID: " + feedbackId);
+                    System.out.println("Instructor: " + instructorUsername);
+                    System.out.println("Client: " + clientUsername);
+                    System.out.println("Message: " + message);
+                    System.out.println("Date: " + creationDate);
+                    System.out.println("-------------------------------------");
+                    foundAny = true;
                 }
             }
-            if (!found) {
-                logger.log(Level.INFO, "\u001B[33mNo feedback found for this user.\u001B[0m");
-            }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "\u001B[31mError reading feedback file: {0}\u001B[0m", e.getMessage());
+            System.out.println("Error reading feedback file: " + e.getMessage());
+            return;
+        }
+
+        if (!foundAny) {
+            System.out.println("No feedback found for this user.");
         }
     }
 
-    
-    public static void showFeedbackDashboard(String username,String userType) {
+    public static void showFeedbackDashboard(String username, String userType) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            logger.log(Level.INFO, "\u001B[36m------ Feedback Dashboard ------\u001B[0m\n" +
-                    "\u001B[32m1. View All Feedback\n" +
-                    "2. Add New Feedback\n" +
-                    "3. Exit\n" +
-                    "\u001B[33mChoose an option: \u001B[0m");
+            System.out.println("------ Feedback Dashboard ------");
+            System.out.println("1. View All Feedback");
+            System.out.println("2. Add New Feedback");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // consume the newline
+            // Use nextLine() so each line of test input aligns with each read
+            String choiceLine = scanner.nextLine().trim();
+            int choice;
+            try {
+                choice = Integer.parseInt(choiceLine);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid choice, please try again.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
-                    FeedbackHandler.viewAllFeedback(username);
+                    viewAllFeedback(username);
                     break;
                 case 2:
-                    FeedbackHandler.sendFeedback(username, userType);
+                    sendFeedback(username, userType);
                     break;
                 case 3:
-                    return; // Exit
+                    return; // exit
                 default:
-                    logger.log(Level.WARNING, "\u001B[31mInvalid choice, please try again.\u001B[0m");
+                    System.out.println("Invalid choice, please try again.");
             }
         }
     }
